@@ -2,10 +2,12 @@
 # Copyright (c) 2026 Fabian Schöpflin. Alle Rechte vorbehalten.
 
 # --- Standardbibliotheken ---
+import contextlib
 import json
 import logging
 import sys
 from pathlib import Path
+from typing import Literal
 
 # --- Version ---
 VERSION = "1.0.1"
@@ -25,10 +27,9 @@ def _setup_logging() -> None:
 
     _stdout = sys.stdout
     if hasattr(_stdout, "reconfigure"):
-        try:
+        # Schlägt fehl, wenn bereits Ausgaben gepuffert sind; dann bleibt die Kodierung.
+        with contextlib.suppress(OSError, ValueError):
             _stdout.reconfigure(encoding="utf-8", errors="replace")
-        except Exception:
-            pass
     stream_handler = logging.StreamHandler(_stdout)
     stream_handler.setFormatter(formatter)
     stream_handler.setLevel(logging.DEBUG)
@@ -38,7 +39,7 @@ def _setup_logging() -> None:
 _setup_logging()
 
 
-def print(*args, **kwargs) -> None:  # noqa: A001
+def print(*args, **kwargs) -> None:
     """Modul-weiter print()-Wrapper: routet alle Ausgaben durch das Logging-System.
 
     Identisches Verhalten wie builtin print() via StreamHandler → stdout.
@@ -61,7 +62,7 @@ def print(*args, **kwargs) -> None:  # noqa: A001
 class Config:
     """Verwaltet die Einstellungen des st3-Konverters."""
 
-    def __init__(self, config_file: Path = None):
+    def __init__(self, config_file: Path | Literal[False] | None = None):
         """Initialisiert die Konfiguration.
 
         Args:
@@ -102,7 +103,8 @@ class Config:
                 with open(self.config_file, encoding="utf-8") as f:
                     loaded = json.load(f)
                     self.settings.update(loaded)
-            except Exception as e:
+            # ValueError umfasst json.JSONDecodeError und Dateien, die kein Objekt enthalten
+            except (OSError, ValueError, TypeError) as e:
                 print(f"[WARNUNG] Fehler beim Laden der Config: {e}")
 
     def save(self):
@@ -111,10 +113,12 @@ class Config:
             return
         try:
             self.config_file.parent.mkdir(parents=True, exist_ok=True)
-            with open(self.config_file, "w", encoding="utf-8") as f:
-                json.dump(self.settings, f, indent=4, ensure_ascii=False)
+            # Tabs, LF und Schlusszeilenumbruch wie die Biome-Formatierung
+            with open(self.config_file, "w", encoding="utf-8", newline="\n") as f:
+                json.dump(self.settings, f, indent="\t", ensure_ascii=False)
+                f.write("\n")
             print(f"[OK] Einstellungen gespeichert: {self.config_file}")
-        except Exception as e:
+        except (OSError, TypeError, ValueError) as e:
             print(f"[FEHLER] Fehler beim Speichern der Config: {e}")
 
     def get(self, key: str, default=None):

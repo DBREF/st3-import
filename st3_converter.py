@@ -19,11 +19,11 @@ if _osgeo4w_proj.is_dir() and (_osgeo4w_proj / "de_adv_BETA2007.tif").exists():
 
 
 # --- Drittanbieter-Bibliotheken ---
-from lxml import etree as ET  # noqa: E402
-from pyproj import Transformer  # noqa: E402
+from lxml import etree as ET
+from pyproj import Transformer
 
 # --- Module ---
-from core.core import logger  # noqa: E402
+from core.core import logger
 
 # --- Reguläre Ausdrücke ---
 _RE_SWITCH_NAME = re.compile(
@@ -506,7 +506,7 @@ class st3Converter:
                 logger.warning(msg)
 
         # Hochgradige Vertices (Grad ≥ 5)
-        for v, inc in vertex_inc.items():
+        for inc in vertex_inc.values():
             if len(inc) >= 5:
                 repr_nr = min(nr for (nr, _) in inc)
                 coord = elems[repr_nr]["g_coord"]
@@ -546,7 +546,7 @@ class st3Converter:
         elem_uf = _UnionFind()
         for nr in elems:
             elem_uf.find(nr)
-        for v, inc in vertex_inc.items():
+        for inc in vertex_inc.values():
             nrs = [nr for (nr, _) in inc]
             for k in range(1, len(nrs)):
                 elem_uf.union(nrs[0], nrs[k])
