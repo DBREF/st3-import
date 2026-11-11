@@ -243,7 +243,7 @@ Jede resultierende Äquivalenzklasse ist ein **Vertex**. Für jeden Vertex wird 
 Inzidenzliste geführt:
 
 ```
-vertex_inc[vertex_id] → [(elem_nr, seite), …]   # seite ∈ {"g", "b"}
+vertex_inc[vertex_id] → [(elem_nr, side), …]   # side ∈ {"g", "b"}
 ```
 
 Der **Grad** eines Vertex ist `len(vertex_inc[vertex_id])`.
