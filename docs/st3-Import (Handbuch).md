@@ -9,11 +9,11 @@
 `st3_converter.py` überführt Zusi-3-Streckendateien (`.st3`) in ein topologisches
 Knoten-Kanten-Modell. Pro verarbeiteter Datei entstehen zwei Layer:
 
-| Layer-Name | Geometrietyp | Inhalt |
-|---|---|---|
-| `Gleiskante` | LineString | Gleisabschnitte zwischen Knoten |
-| `Gleisknoten` | Point | Weichen, Modulgrenzen, Gleisenden |
-| `Hüllkurve` ¹ | Polygon | Umgrenzungspolygon des Streckenmoduls (Geländeformer) |
+| Layer-Name    | Geometrietyp | Inhalt                                                |
+| ------------- | ------------ | ----------------------------------------------------- |
+| `Gleiskante`  | LineString   | Gleisabschnitte zwischen Knoten                       |
+| `Gleisknoten` | Point        | Weichen, Modulgrenzen, Gleisenden                     |
+| `Hüllkurve` ¹ | Polygon      | Umgrenzungspolygon des Streckenmoduls (Geländeformer) |
 
 ¹ Optional; nur wenn **Hüllkurve importieren** aktiv ist.
 
@@ -45,15 +45,15 @@ Knoten-Kanten-Modell. Pro verarbeiteter Datei entstehen zwei Layer:
 
 ## Voraussetzungen
 
-| Komponente | Beschreibung |
-|---|---|
-| `st3_converter.py` | Konverter-Kernmodul (Klasse `st3Converter`) |
-| `core/core.py` | Logging-Setup und `Config`-Klasse; lädt `config/st3_converter_config.json` |
+| Komponente                         | Beschreibung                                                                                           |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `st3_converter.py`                 | Konverter-Kernmodul (Klasse `st3Converter`)                                                            |
+| `core/core.py`                     | Logging-Setup und `Config`-Klasse; lädt `config/st3_converter_config.json`                             |
 | `config/st3_converter_config.json` | Persistente Standardeinstellungen (wird beim ersten Start automatisch angelegt, falls nicht vorhanden) |
-| `lxml` | Python-Bibliothek für XML-Parsing (muss in der Python-Umgebung verfügbar sein) |
-| `pyproj` | Koordinatentransformation; erwartet die PROJ-Datendateien |
-| `geopandas`, `shapely` | Nur CLI: GeoPackage-Ausgabe |
-| PROJ-Daten (`de_adv_BETA2007.tif`) | Optional; wird aus dem PROJ-Datenpfad geladen, sofern vorhanden, für genaue DHDN↔WGS84-Transformation |
+| `lxml`                             | Python-Bibliothek für XML-Parsing (muss in der Python-Umgebung verfügbar sein)                         |
+| `pyproj`                           | Koordinatentransformation; erwartet die PROJ-Datendateien                                              |
+| `geopandas`, `shapely`             | Nur CLI: GeoPackage-Ausgabe                                                                            |
+| PROJ-Daten (`de_adv_BETA2007.tif`) | Optional; wird aus dem PROJ-Datenpfad geladen, sofern vorhanden, für genaue DHDN↔WGS84-Transformation  |
 
 ---
 
@@ -67,13 +67,13 @@ Alle Einstellungen werden dauerhaft in `config/st3_converter_config.json` gespei
 
 ```json
 {
-    "auto_detect_crs": true,
-    "fallback_epsg": 32632,
-    "target_epsg": 31467,
-    "normalize_switch_names": true,
-    "import_envelope": true,
-    "create_log_file": true,
-    "open_log_file": false
+	"auto_detect_crs": true,
+	"fallback_epsg": 32632,
+	"target_epsg": 31467,
+	"normalize_switch_names": true,
+	"import_envelope": true,
+	"create_log_file": true,
+	"open_log_file": false
 }
 ```
 
@@ -98,17 +98,17 @@ Anführungszeichen werden automatisch bereinigt.
 
 Im Einstellungsmenü (Hauptmenü-Option **2**) stehen folgende Optionen zur Verfügung:
 
-| Option | Beschreibung |
-|---|---|
-| 1 | Quell-KBS automatisch erkennen (ein/aus) |
-| 2 | Rückfall-KBS festlegen |
-| 3 | Ziel-KBS festlegen |
-| 4 | Namen von Weichenknoten normalisieren (ein/aus) |
-| 5 | Protokoll erstellen (ein/aus) |
-| 6 | Protokoll nach Abschluss öffnen (ein/aus) |
-| 7 | Hüllkurve importieren (ein/aus) |
-| 8 | Einstellungen in JSON-Datei speichern |
-| 0 | Zurück |
+| Option | Beschreibung                                    |
+| ------ | ----------------------------------------------- |
+| 1      | Quell-KBS automatisch erkennen (ein/aus)        |
+| 2      | Rückfall-KBS festlegen                          |
+| 3      | Ziel-KBS festlegen                              |
+| 4      | Namen von Weichenknoten normalisieren (ein/aus) |
+| 5      | Protokoll erstellen (ein/aus)                   |
+| 6      | Protokoll nach Abschluss öffnen (ein/aus)       |
+| 7      | Hüllkurve importieren (ein/aus)                 |
+| 8      | Einstellungen in JSON-Datei speichern           |
+| 0      | Zurück                                          |
 
 ### CLI-Modus
 
@@ -116,18 +116,18 @@ Im Einstellungsmenü (Hauptmenü-Option **2**) stehen folgende Optionen zur Verf
 python core/cli.py -i <Eingabe.st3> -o <Ausgabe.gpkg> [Optionen]
 ```
 
-| Argument | Beschreibung |
-|---|---|
-| `-i / --input DATEI` | Pfad zur `.st3`-Eingabedatei (Pflicht im CLI-Modus) |
-| `-o / --output DATEI` | Pfad zur Ausgabe-GeoPackage-Datei (Pflicht im CLI-Modus) |
-| `-e / --epsg CODE` | Ziel-KBS als EPSG-Code (Standard: 31467) |
-| `--no-auto-detect` | Automatische CRS-Erkennung deaktivieren |
-| `--fallback-epsg CODE` | Rückfall-KBS wenn Auto-Erkennung fehlschlägt (Standard: aus JSON-Config) |
+| Argument                  | Beschreibung                                                                  |
+| ------------------------- | ----------------------------------------------------------------------------- |
+| `-i / --input DATEI`      | Pfad zur `.st3`-Eingabedatei (Pflicht im CLI-Modus)                           |
+| `-o / --output DATEI`     | Pfad zur Ausgabe-GeoPackage-Datei (Pflicht im CLI-Modus)                      |
+| `-e / --epsg CODE`        | Ziel-KBS als EPSG-Code (Standard: 31467)                                      |
+| `--no-auto-detect`        | Automatische CRS-Erkennung deaktivieren                                       |
+| `--fallback-epsg CODE`    | Rückfall-KBS wenn Auto-Erkennung fehlschlägt (Standard: aus JSON-Config)      |
 | `--no-normalize-switches` | Weichenknoten-Normalisieren deaktivieren (Signalnamen unverändert übernehmen) |
-| `--import-envelope` | Hüllkurve importieren (unabhängig von gespeicherter Config erzwingen) |
-| `--no-import-envelope` | Hüllkurven-Import deaktivieren |
-| `--open-log` | Protokoll nach Abschluss automatisch öffnen |
-| `-v / --version` | Versionsnummer ausgeben |
+| `--import-envelope`       | Hüllkurve importieren (unabhängig von gespeicherter Config erzwingen)         |
+| `--no-import-envelope`    | Hüllkurven-Import deaktivieren                                                |
+| `--open-log`              | Protokoll nach Abschluss automatisch öffnen                                   |
+| `-v / --version`          | Versionsnummer ausgeben                                                       |
 
 Die Ausgabe ist ein GeoPackage mit den Layern `Gleiskante` (LineString) und
 `Gleisknoten` (Point) — sowie optional `Hüllkurve` (Polygon) — im gewählten Ziel-KBS.
@@ -160,9 +160,9 @@ for w in converter.warnings:
 
 Rückgabe von `convert()`:
 
-| Variable | Typ | Beschreibung |
-|---|---|---|
-| `nodes_features` | `list[dict]` | Gleisknoten; `geometry` = `(x, y)`-Tupel, `attrs` = Attribut-Dict |
+| Variable         | Typ          | Beschreibung                                                                 |
+| ---------------- | ------------ | ---------------------------------------------------------------------------- |
+| `nodes_features` | `list[dict]` | Gleisknoten; `geometry` = `(x, y)`-Tupel, `attrs` = Attribut-Dict            |
 | `edges_features` | `list[dict]` | Gleiskanten; `geometry` = Liste von `(x, y)`-Tupeln, `attrs` = Attribut-Dict |
 
 Die Attributfelder entsprechen den in [st3-Import (Technische Dokumentation).md → Zielattribute](st3-Import%20%28Technische%20Dokumentation%29.md#zielattribute)

@@ -19,11 +19,11 @@ Ausgabe als GeoPackage (`.gpkg`).
 
 **Ausgabe pro importierter `.st3`-Datei:**
 
-| Layer | Geometrietyp | Inhalt |
-|---|---|---|
-| `Gleiskante` | LineString | Gleisabschnitte zwischen Knoten |
-| `Gleisknoten` | Point | Weichen, Modulgrenzen, Gleisenden |
-| `Hüllkurve` | Polygon | Streckenbegrenzung (optional, aus `<Huellkurve>`) |
+| Layer         | Geometrietyp | Inhalt                                            |
+| ------------- | ------------ | ------------------------------------------------- |
+| `Gleiskante`  | LineString   | Gleisabschnitte zwischen Knoten                   |
+| `Gleisknoten` | Point        | Weichen, Modulgrenzen, Gleisenden                 |
+| `Hüllkurve`   | Polygon      | Streckenbegrenzung (optional, aus `<Huellkurve>`) |
 
 Die Ausgabe erfolgt als GeoPackage (`.gpkg`) in einem frei wählbaren Verzeichnis. Ist das Eingabeverzeichnis schreibgeschützt, wird automatisch das aktuelle Arbeitsverzeichnis als Standard vorgeschlagen.
 
@@ -78,18 +78,18 @@ python -m core.cli --version
 
 **CLI-Parameter:**
 
-| Parameter | Beschreibung |
-|---|---|
-| `-i`, `--input` | Pfad zur `.st3`-Eingabedatei |
-| `-o`, `--output` | Pfad zur Ausgabe-GeoPackage-Datei |
-| `-e`, `--epsg` | EPSG-Code des Ziel-KBS (Standard: `31467`) |
-| `--no-auto-detect` | Automatische CRS-Erkennung deaktivieren |
-| `--fallback-epsg` | Rückfall-EPSG wenn Auto-Erkennung fehlschlägt (Standard: `32632`) |
-| `--no-normalize-switches` | Normalisierung von Weichenknoten-Signalnamen deaktivieren |
-| `--import-envelope` | Hüllkurven-Polygon importieren und als Layer speichern |
-| `--no-import-envelope` | Hüllkurven-Import deaktivieren |
-| `--open-log` | Protokolldatei nach Abschluss automatisch öffnen |
-| `-v`, `--version` | Versionsnummer anzeigen |
+| Parameter                 | Beschreibung                                                      |
+| ------------------------- | ----------------------------------------------------------------- |
+| `-i`, `--input`           | Pfad zur `.st3`-Eingabedatei                                      |
+| `-o`, `--output`          | Pfad zur Ausgabe-GeoPackage-Datei                                 |
+| `-e`, `--epsg`            | EPSG-Code des Ziel-KBS (Standard: `31467`)                        |
+| `--no-auto-detect`        | Automatische CRS-Erkennung deaktivieren                           |
+| `--fallback-epsg`         | Rückfall-EPSG wenn Auto-Erkennung fehlschlägt (Standard: `32632`) |
+| `--no-normalize-switches` | Normalisierung von Weichenknoten-Signalnamen deaktivieren         |
+| `--import-envelope`       | Hüllkurven-Polygon importieren und als Layer speichern            |
+| `--no-import-envelope`    | Hüllkurven-Import deaktivieren                                    |
+| `--open-log`              | Protokolldatei nach Abschluss automatisch öffnen                  |
+| `-v`, `--version`         | Versionsnummer anzeigen                                           |
 
 **Verwendung als Python-Bibliothek:**
 
@@ -98,24 +98,24 @@ from st3_converter import st3Converter
 
 converter = st3Converter(
     input_path="Strecke.st3",
-    target_epsg=31467,              # Ziel-KBS: DHDN/GK Zone 3
-    auto_detect_crs=True,           # UTM-Zone automatisch aus Datei lesen
-    normalize_switch_names=True,    # Weichenknoten-Namen normalisieren
+    target_epsg=31467,  # Ziel-KBS: DHDN/GK Zone 3
+    auto_detect_crs=True,  # UTM-Zone automatisch aus Datei lesen
+    normalize_switch_names=True,  # Weichenknoten-Namen normalisieren
 )
 nodes_features, edges_features = converter.convert()
 ```
 
 **Konfiguration (`config/st3_converter_config.json`):**
 
-| Schlüssel | Standard | Beschreibung |
-|---|---|---|
-| `auto_detect_crs` | `true` | UTM-Zone automatisch aus Datei lesen |
-| `fallback_epsg` | `32632` | Rückfall-KBS wenn Auto-Erkennung fehlschlägt |
-| `target_epsg` | `31467` | Ziel-KBS der Ausgabelayer |
-| `normalize_switch_names` | `true` | Weichen-Signalnamen normalisieren |
-| `import_envelope` | `true` | Hüllkurven-Polygon aus `<Huellkurve>` importieren |
-| `create_log_file` | `true` | Protokolldatei (`.log`) erstellen |
-| `open_log_file` | `false` | Protokolldatei nach Abschluss öffnen |
+| Schlüssel                | Standard | Beschreibung                                      |
+| ------------------------ | -------- | ------------------------------------------------- |
+| `auto_detect_crs`        | `true`   | UTM-Zone automatisch aus Datei lesen              |
+| `fallback_epsg`          | `32632`  | Rückfall-KBS wenn Auto-Erkennung fehlschlägt      |
+| `target_epsg`            | `31467`  | Ziel-KBS der Ausgabelayer                         |
+| `normalize_switch_names` | `true`   | Weichen-Signalnamen normalisieren                 |
+| `import_envelope`        | `true`   | Hüllkurven-Polygon aus `<Huellkurve>` importieren |
+| `create_log_file`        | `true`   | Protokolldatei (`.log`) erstellen                 |
+| `open_log_file`          | `false`  | Protokolldatei nach Abschluss öffnen              |
 
 ---
 
