@@ -15,7 +15,7 @@ _TRANSFORMER_CACHE: dict = {}
 
 
 def convert_envelope(
-    input_path: str,
+    input_path: str | Path,
     target_epsg: int = 31467,
     auto_detect_crs: bool = True,
     fallback_epsg: int = 32632,
@@ -42,13 +42,13 @@ def convert_envelope(
 
         Leer, wenn kein <Huellkurve>-Element vorhanden oder weniger als 3 Punkte.
     """
-    input_path = Path(input_path)
-    stem = input_path.stem
+    path = Path(input_path)
+    stem = path.stem
 
     if _route_el is not None:
         route = _route_el
     else:
-        tree = ET.parse(str(input_path))
+        tree = ET.parse(str(path))
         root = tree.getroot()
         route = root.find("Strecke")
         if route is None:
