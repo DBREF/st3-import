@@ -444,7 +444,7 @@ def main():
     """Hauptfunktion für das CLI."""
     # Lazy imports um zirkuläre Importe zu vermeiden
     from convert.convert_envelope import convert_envelope
-    from st3_converter import st3Converter
+    from st3_converter import St3Converter
 
     parser = argparse.ArgumentParser(
         description=(
@@ -553,7 +553,7 @@ Beispielaufrufe:
         }
 
         try:
-            converter = st3Converter(
+            converter = St3Converter(
                 str(input_file),
                 target_epsg=config["target_epsg"],
                 auto_detect_crs=config["auto_detect_crs"],
@@ -606,7 +606,7 @@ Beispielaufrufe:
             input_file, output_file, config = result
 
             try:
-                converter = st3Converter(
+                converter = St3Converter(
                     str(input_file),
                     target_epsg=config["target_epsg"],
                     auto_detect_crs=config.get("auto_detect_crs", True),

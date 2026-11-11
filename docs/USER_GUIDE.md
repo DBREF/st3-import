@@ -33,7 +33,7 @@ Knoten-Kanten-Modell. Pro verarbeiteter Datei entstehen zwei Layer:
 > `bst_bis` aus dem jeweiligen Endknoten – analog zu `knotenname_von`/`knotenname_bis`.
 > Grenzt eine Kante an einen Nicht-Weichen-Knoten, bleibt das Feld leer.
 
-`st3Converter` ist auf zwei Wegen nutzbar:
+`St3Converter` ist auf zwei Wegen nutzbar:
 
 - **CLI** (`core/cli.py`): Direkte Konvertierung zu GeoPackage (`.gpkg`)
 - **Python-Bibliothek**: Direkte Einbindung in eigene Python-Skripte
@@ -47,7 +47,7 @@ Knoten-Kanten-Modell. Pro verarbeiteter Datei entstehen zwei Layer:
 
 | Komponente                         | Beschreibung                                                                                           |
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `st3_converter.py`                 | Konverter-Kernmodul (Klasse `st3Converter`)                                                            |
+| `st3_converter.py`                 | Konverter-Kernmodul (Klasse `St3Converter`)                                                            |
 | `core/core.py`                     | Logging-Setup und `Config`-Klasse; lädt `config/st3_converter_config.json`                             |
 | `config/st3_converter_config.json` | Persistente Standardeinstellungen (wird beim ersten Start automatisch angelegt, falls nicht vorhanden) |
 | `lxml`                             | Python-Bibliothek für XML-Parsing (muss in der Python-Umgebung verfügbar sein)                         |
@@ -136,13 +136,13 @@ Die Ausgabe ist ein GeoPackage mit den Layern `Gleiskante` (LineString) und
 
 ## Programmatische Nutzung
 
-`st3Converter` kann direkt aus Python genutzt werden. Die von `convert()`
+`St3Converter` kann direkt aus Python genutzt werden. Die von `convert()`
 zurückgegebenen Feature-Dicts lassen sich in eigenen Skripten weiterverarbeiten.
 
 ```python
-from st3_converter import st3Converter
+from st3_converter import St3Converter
 
-converter = st3Converter(
+converter = St3Converter(
     input_path=r"C:\...\Freudenstein_2025.st3",
     target_epsg=31467,
     auto_detect_crs=True,

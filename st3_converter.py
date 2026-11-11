@@ -72,7 +72,7 @@ class _UnionFind:
 # Hauptklasse
 
 
-class st3Converter:
+class St3Converter:
     """Konvertiert eine Zusi-3-Streckendatei (.st3) in ein Knoten-Kanten-Modell.
 
     Rückgabe von convert():

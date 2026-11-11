@@ -31,7 +31,7 @@ Die Ausgabe erfolgt als GeoPackage (`.gpkg`) in einem frei wählbaren Verzeichni
 
 | Pfad / Datei                       | Inhalt                                                                                      |
 | ---------------------------------- | ------------------------------------------------------------------------------------------- |
-| `st3_converter.py`                 | Hauptklasse `st3Converter` (Konvertierungslogik)                                            |
+| `st3_converter.py`                 | Hauptklasse `St3Converter` (Konvertierungslogik)                                            |
 | `core/cli.py`                      | CLI-Einstiegspunkt, interaktiver Modus, GeoPackage-Export                                   |
 | `core/core.py`                     | Logging-System, Versionskonstante, `Config`-Klasse                                          |
 | `convert/convert_envelope.py`      | Hüllkurven-Import aus dem `<Huellkurve>`-Element                                            |
@@ -40,7 +40,6 @@ Die Ausgabe erfolgt als GeoPackage (`.gpkg`) in einem frei wählbaren Verzeichni
 | `requirements.txt`                 | Python-Abhängigkeiten                                                                       |
 | `pyproject.toml`                   | Einstellungen für Ruff (kein installierbares Paket)                                         |
 | `biome.json`                       | Linter und Formatierer für Markdown/JSON (Biome, Standardregeln)                            |
-| `.github/workflows/lint.yml`       | CI: Ruff und Biome bei Push und Pull Request                                                |
 
 ## Einrichtung
 
@@ -107,9 +106,9 @@ python -m core.cli --version
 ## Verwendung als Python-Bibliothek
 
 ```python
-from st3_converter import st3Converter
+from st3_converter import St3Converter
 
-converter = st3Converter(
+converter = St3Converter(
     input_path="Strecke.st3",
     target_epsg=31467,  # Ziel-KBS: DHDN/GK Zone 3
     auto_detect_crs=True,  # UTM-Zone automatisch aus Datei lesen

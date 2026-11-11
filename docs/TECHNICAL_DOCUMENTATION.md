@@ -375,7 +375,7 @@ DHDN/Gauß-Krüger Zone 3).
 
 ### Schritt 8 – Layer-Ausgabe
 
-`st3Converter.convert()` gibt zwei Listen von Feature-Dicts zurück:
+`St3Converter.convert()` gibt zwei Listen von Feature-Dicts zurück:
 
 ```python
 nodes_features, edges_features = converter.convert()
@@ -392,7 +392,7 @@ Die Weiterverarbeitung der Feature-Dicts ist aufruferabhängig:
 
 | Kontext                                      | Ausgabe                                                                                               |
 | -------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Python-Bibliothek (`st3Converter.convert()`) | Gibt `(nodes_features, edges_features)` zurück — Feature-Listen ohne GeoPackage-Schreibzugriff        |
+| Python-Bibliothek (`St3Converter.convert()`) | Gibt `(nodes_features, edges_features)` zurück — Feature-Listen ohne GeoPackage-Schreibzugriff        |
 | CLI (`core/cli.py`)                          | GeoPackage mit Layern `Gleiskante` / `Gleisknoten` / optional `Hüllkurve` (via `geopandas`/`shapely`) |
 
 ## Hüllkurven-Import
@@ -437,7 +437,7 @@ beim Erstellen des WKT/`shapely.Polygon` automatisch.
 ### Implementierung (`convert/convert_envelope.py`)
 
 Die Funktion `convert_envelope()` im Unterpaket `convert/` kann eigenständig oder
-optimiert zusammen mit `st3Converter` aufgerufen werden:
+optimiert zusammen mit `St3Converter` aufgerufen werden:
 
 ```python
 convert_envelope(
@@ -666,7 +666,7 @@ relevant; alle anderen Bits beeinflussen Rendering und Fahrwegsicherung, nicht d
 
 ```
 st3-Import/
-  ├─ st3_converter.py        # Klasse st3Converter (Konvertierungslogik, 8 Schritte)
+  ├─ st3_converter.py        # Klasse St3Converter (Konvertierungslogik, 8 Schritte)
   ├─ config/
   │    └─ st3_converter_config.json   # Persistente Einstellungen
   ├─ convert/
@@ -677,13 +677,13 @@ st3-Import/
        ├─ cli.py             # CLI (interaktiver Modus + argparse)
 ```
 
-### `st3Converter` (`st3_converter.py`)
+### `St3Converter` (`st3_converter.py`)
 
 Hauptklasse; Kann als Bibliothek oder von CLI (`core/cli.py`)
 gleichermaßen genutzt werden. Konstruktor:
 
 ```python
-st3Converter(
+St3Converter(
     input_path,  # Pfad zur .st3-Datei
     target_epsg=31467,  # Ziel-KBS
     auto_detect_crs=True,
