@@ -3,6 +3,7 @@
 
 # --- Standardbibliotheken ---
 import contextlib
+import io
 import json
 import logging
 import sys
@@ -26,7 +27,7 @@ def _setup_logging() -> None:
     formatter = logging.Formatter("%(message)s")
 
     _stdout = sys.stdout
-    if hasattr(_stdout, "reconfigure"):
+    if isinstance(_stdout, io.TextIOWrapper):
         # Schlägt fehl, wenn bereits Ausgaben gepuffert sind; dann bleibt die Kodierung.
         with contextlib.suppress(OSError, ValueError):
             _stdout.reconfigure(encoding="utf-8", errors="replace")
