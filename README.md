@@ -38,8 +38,10 @@ Die Ausgabe erfolgt als GeoPackage (`.gpkg`) in einem frei wählbaren Verzeichni
 | `config/st3_converter_config.json` | Persistente Einstellungen                                                                   |
 | `docs/`                            | [Handbuch](docs/USER_GUIDE.md), [Technische Dokumentation](docs/TECHNICAL_DOCUMENTATION.md) |
 | `requirements.txt`                 | Python-Abhängigkeiten                                                                       |
-| `pyproject.toml`                   | Einstellungen für Ruff (kein installierbares Paket)                                         |
+| `requirements-dev.txt`             | Entwicklungswerkzeuge (Ruff, Pyright, Typpakete)                                            |
+| `pyproject.toml`                   | Einstellungen für Ruff und Pyright (kein installierbares Paket)                             |
 | `biome.json`                       | Linter und Formatierer für Markdown/JSON (Biome, Standardregeln)                            |
+| `.github/workflows/checks.yml`     | Prüfstrecke für PRs (Ruff, Biome, Pyright)                                                  |
 
 ## Einrichtung
 
@@ -52,11 +54,13 @@ py -m venv .venv
 
 Alternativ läuft der Konverter mit dem Python aus OSGeo4W, das die Abhängigkeiten bereits mitbringt. Liegt `C:\OSGeo4W\share\proj\de_adv_BETA2007.tif` vor, wird das BETA2007-Gitter automatisch verwendet.
 
-Geprüft und formatiert wird mit [Ruff](https://docs.astral.sh/ruff/) für Python und [Biome](https://biomejs.dev/) für Markdown/JSON (in VS Code über die jeweilige Erweiterung). Von der Kommandozeile:
+Geprüft und formatiert wird mit [Ruff](https://docs.astral.sh/ruff/) für Python, [Pyright](https://microsoft.github.io/pyright/) für die Typen (Stufe `standard`, geprüft gegen Python 3.12 wie in QGIS) und [Biome](https://biomejs.dev/) für Markdown/JSON. Die Werkzeuge kommen aus `requirements-dev.txt`; dieselben Prüfungen laufen bei jeder PR (`checks.yml`). Von der Kommandozeile:
 
 ```powershell
-ruff check .                                  # Python prüfen
-ruff format --check .                         # Python-Formatierung prüfen
+.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.venv\Scripts\ruff.exe check .                # Python prüfen
+.venv\Scripts\ruff.exe format --check .       # Python-Formatierung prüfen
+.venv\Scripts\pyright.exe                     # Typen prüfen
 npx @biomejs/biome@2.6.6 check .              # Markdown/JSON prüfen
 npx @biomejs/biome@2.6.6 check --write .      # sichere Korrekturen und Formatierung anwenden
 ```

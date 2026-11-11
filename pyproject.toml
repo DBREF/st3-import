@@ -5,3 +5,13 @@
 # sein Ordnername (st3-import, im Worktree beliebig) ist kein gültiger Modulname.
 "__init__.py" = ["N999"]
 "convert/__init__.py" = ["N999"]
+
+[tool.pyright]
+# 3.12 statt 3.15: Der Konverter läuft unverändert im Python von QGIS (OSGeo4W, 3.12) und darf
+# keine neuere Syntax oder Standardbibliothek verwenden.
+pythonVersion = "3.12"
+pythonPlatform = "Windows"
+typeCheckingMode = "standard"
+venvPath = "."
+venv = ".venv"
+exclude = ["**/__pycache__", ".venv", ".claude"]
