@@ -1,9 +1,9 @@
-## st3-Import
+# st3-Import
 
 Konverter für Zusi-3-Streckendateien (`.st3`) in ein topologisches Knoten-Kanten-Modell.  
 Ausgabe als GeoPackage (`.gpkg`).
 
-**Funktionen:**
+## Funktionen
 
 - Konvertierung von `.st3`-Dateien in ein Knoten-Kanten-Modell (GeoPackage)
 - Automatische KBS-Erkennung aus dem `<UTM UTM_Zone="…">`-Element (EPSG: 32600 + Zone)
@@ -27,31 +27,44 @@ Ausgabe als GeoPackage (`.gpkg`).
 
 Die Ausgabe erfolgt als GeoPackage (`.gpkg`) in einem frei wählbaren Verzeichnis. Ist das Eingabeverzeichnis schreibgeschützt, wird automatisch das aktuelle Arbeitsverzeichnis als Standard vorgeschlagen.
 
-**Verzeichnisstruktur:**
+## Aufbau
 
+| Pfad / Datei                       | Inhalt                                                                                      |
+| ---------------------------------- | ------------------------------------------------------------------------------------------- |
+| `st3_converter.py`                 | Hauptklasse `st3Converter` (Konvertierungslogik)                                            |
+| `core/cli.py`                      | CLI-Einstiegspunkt, interaktiver Modus, GeoPackage-Export                                   |
+| `core/core.py`                     | Logging-System, Versionskonstante, `Config`-Klasse                                          |
+| `convert/convert_envelope.py`      | Hüllkurven-Import aus dem `<Huellkurve>`-Element                                            |
+| `config/st3_converter_config.json` | Persistente Einstellungen                                                                   |
+| `docs/`                            | [Handbuch](docs/USER_GUIDE.md), [Technische Dokumentation](docs/TECHNICAL_DOCUMENTATION.md) |
+| `requirements.txt`                 | Python-Abhängigkeiten                                                                       |
+| `pyproject.toml`                   | Einstellungen für Ruff (kein installierbares Paket)                                         |
+| `biome.json`                       | Linter und Formatierer für Markdown/JSON (Biome, Standardregeln)                            |
+| `.github/workflows/lint.yml`       | CI: Ruff und Biome bei Push und Pull Request                                                |
+
+## Einrichtung
+
+Voraussetzung: Python 3.10 oder neuer. Abhängigkeiten (`geopandas`, `lxml`, `pyproj`, `shapely`) in einer lokalen virtuellen Umgebung:
+
+```powershell
+py -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
-st3-Import/
-├── st3_converter.py                                # Hauptklasse st3Converter (Konvertierungslogik)
-├── requirements.txt                                # Python-Abhängigkeiten
-├── config/
-│   └── st3_converter_config.json                   # Persistente Einstellungen
-├── convert/
-│   └── convert_envelope.py                         # Hüllkurven-Import aus <Huellkurve>-Element
-├── core/
-│   ├── cli.py                                      # CLI-Einstiegspunkt, interaktiver Modus, GeoPackage-Export
-│   └── core.py                                     # Logging-System, Versionskonstante, Config-Klasse
-└── docs/
-    ├── st3-Import (Handbuch).md                    # Bedienungsanleitung und Konfigurationsreferenz
-    └── st3-Import (Technische Dokumentation).md    # Algorithmus, Datenformat, Zielmodell
+
+Alternativ läuft der Konverter mit dem Python aus OSGeo4W, das die Abhängigkeiten bereits mitbringt. Liegt `C:\OSGeo4W\share\proj\de_adv_BETA2007.tif` vor, wird das BETA2007-Gitter automatisch verwendet.
+
+Geprüft und formatiert wird mit [Ruff](https://docs.astral.sh/ruff/) für Python und [Biome](https://biomejs.dev/) für Markdown/JSON (in VS Code über die jeweilige Erweiterung). Von der Kommandozeile:
+
+```powershell
+ruff check .                                  # Python prüfen
+ruff format --check .                         # Python-Formatierung prüfen
+npx @biomejs/biome@2.6.6 check .              # Markdown/JSON prüfen
+npx @biomejs/biome@2.6.6 check --write .      # sichere Korrekturen und Formatierung anwenden
 ```
-
-**Abhängigkeiten:** `geopandas`, `lxml`, `pyproj`, `shapely`
-
-**Dokumentation:** [st3-Import (Handbuch).md](docs/st3-Import%20%28Handbuch%29.md) · [st3-Import (Technische Dokumentation).md](docs/st3-Import%20%28Technische%20Dokumentation%29.md)
 
 ---
 
-**Verwendung (interaktiver Modus):**
+## Verwendung (interaktiver Modus)
 
 ```bash
 python -m core.cli
@@ -60,7 +73,7 @@ python -m core.cli
 Das Programm führt durch die Auswahl der Eingabedatei, des Ziel-KBS und der Ausgabedatei.  
 Einstellungen können im Menü dauerhaft gespeichert werden.
 
-**Verwendung (CLI-Modus):**
+## Verwendung (CLI-Modus)
 
 ```bash
 # Einfache Konvertierung
@@ -91,7 +104,7 @@ python -m core.cli --version
 | `--open-log`              | Protokolldatei nach Abschluss automatisch öffnen                  |
 | `-v`, `--version`         | Versionsnummer anzeigen                                           |
 
-**Verwendung als Python-Bibliothek:**
+## Verwendung als Python-Bibliothek
 
 ```python
 from st3_converter import st3Converter
@@ -105,7 +118,7 @@ converter = st3Converter(
 nodes_features, edges_features = converter.convert()
 ```
 
-**Konfiguration (`config/st3_converter_config.json`):**
+## Konfiguration (`config/st3_converter_config.json`)
 
 | Schlüssel                | Standard | Beschreibung                                      |
 | ------------------------ | -------- | ------------------------------------------------- |
@@ -119,10 +132,16 @@ nodes_features, edges_features = converter.convert()
 
 ---
 
+## Arbeitsweise
+
+- `dev` ist der Entwicklungszweig, `main` erhält nur Releases.
+- Änderungen entstehen in Git-Worktrees und gehen per Pull Request nach `dev`.
+- Englische Bezeichner für Dateinamen, Funktionen, Klassen und Variablen (Eigennamen ausgenommen).
+
 ## Lizenz
 
-siehe LICENSE (MIT)
+MIT, siehe [LICENSE](LICENSE).
 
-Copyright © 2026 Fabian Schöpflin. Alle Rechte vorbehalten.  
+Copyright © 2026 Fabian Schöpflin  
 Autor: Fabian Schöpflin  
 Kontakt: Fabian.Schoepflin@infrageo.de
