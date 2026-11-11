@@ -1,0 +1,7 @@
+# Nur Werkzeugeinstellungen, kein installierbares Python-Paket.
+
+[tool.ruff.lint.per-file-ignores]
+# Der Wurzelordner ist zugleich Paket (__init__.py ergänzt sys.path für eingebettete Aufrufe);
+# sein Ordnername (st3-import, im Worktree beliebig) ist kein gültiger Modulname.
+"__init__.py" = ["N999"]
+"convert/__init__.py" = ["N999"]
