@@ -63,15 +63,15 @@ def convert_envelope(
     utm_zone = int(utm.get("UTM_Zone", "32"))
     source_epsg = (32600 + utm_zone) if auto_detect_crs else fallback_epsg
 
-    huellkurve = route.find("Huellkurve")
-    if huellkurve is None:
+    envelope_el = route.find("Huellkurve")
+    if envelope_el is None:
         return []
 
     base_x = utm_we * 1000.0
     base_y = utm_ns * 1000.0
     pts_utm = [
         (base_x + float(pt.get("X", "0")), base_y + float(pt.get("Y", "0")))
-        for pt in huellkurve.findall("PunktXYZ")
+        for pt in envelope_el.findall("PunktXYZ")
     ]
 
     if len(pts_utm) < 3:

@@ -19,11 +19,11 @@ if _osgeo4w_proj.is_dir() and (_osgeo4w_proj / "de_adv_BETA2007.tif").exists():
 
 
 # --- Drittanbieter-Bibliotheken ---
-from lxml import etree as ET  # noqa: E402
-from pyproj import Transformer  # noqa: E402
+from lxml import etree as ET
+from pyproj import Transformer
 
 # --- Module ---
-from core.core import logger  # noqa: E402
+from core.core import logger
 
 # --- Reguläre Ausdrücke ---
 _RE_SWITCH_NAME = re.compile(
@@ -72,7 +72,7 @@ class _UnionFind:
 # Hauptklasse
 
 
-class st3Converter:
+class St3Converter:
     """Konvertiert eine Zusi-3-Streckendatei (.st3) in ein Knoten-Kanten-Modell.
 
     Rückgabe von convert():
@@ -176,9 +176,9 @@ class st3Converter:
                 continue
 
             # ── Einmalig über alle Kindelemente iterieren (statt ~10× se.find) ──
-            g_el = b_el = info_gegen = info_norm = nnm_el = ngm_el = None
-            nach_norm_els: list = []
-            nach_gegen_els: list = []
+            g_el = b_el = info_opposite = info_norm = nnm_el = ngm_el = None
+            next_norm_els: list = []
+            next_opposite_els: list = []
             signal_els: list = []
             for child in se:
                 tag = child.tag
@@ -187,15 +187,15 @@ class st3Converter:
                 elif tag == "b":
                     b_el = child
                 elif tag == "InfoGegenRichtung":
-                    info_gegen = child
+                    info_opposite = child
                     signal_els.extend(child.findall("Signal"))
                 elif tag == "InfoNormRichtung":
                     info_norm = child
                     signal_els.extend(child.findall("Signal"))
                 elif tag == "NachNorm":
-                    nach_norm_els.append(child)
+                    next_norm_els.append(child)
                 elif tag == "NachGegen":
-                    nach_gegen_els.append(child)
+                    next_opposite_els.append(child)
                 elif tag == "NachNormModul":
                     nnm_el = child
                 elif tag == "NachGegenModul":
@@ -213,7 +213,7 @@ class st3Converter:
 
             # Kilometrierung: InfoGegenRichtung, Fallback InfoNormRichtung
             km_val = None
-            for info_el in (info_gegen, info_norm):
+            for info_el in (info_opposite, info_norm):
                 if info_el is not None:
                     km_str = info_el.get("km", "")
                     if km_str:
@@ -224,48 +224,50 @@ class st3Converter:
                             pass
 
             # Nachfolger im selben Modul
-            nach_norm = [
-                int(e.get("Nr")) for e in nach_norm_els if e.get("Nr") is not None
+            next_norm = [
+                int(e.get("Nr")) for e in next_norm_els if e.get("Nr") is not None
             ]
-            nach_gegen = [
-                int(e.get("Nr")) for e in nach_gegen_els if e.get("Nr") is not None
+            next_opposite = [
+                int(e.get("Nr")) for e in next_opposite_els if e.get("Nr") is not None
             ]
 
             # Modulverweise (NachNormModul / NachGegenModul)
-            nach_norm_modul = None
+            next_norm_module = None
             if nnm_el is not None:
                 d = nnm_el.find("Datei")
                 if d is not None:
                     fn = d.get("Dateiname", "")
                     if fn:
-                        nach_norm_modul = Path(fn.replace("\\", "/")).stem or None
+                        next_norm_module = Path(fn.replace("\\", "/")).stem or None
 
-            nach_gegen_modul = None
+            next_opposite_module = None
             if ngm_el is not None:
                 d = ngm_el.find("Datei")
                 if d is not None:
                     fn = d.get("Dateiname", "")
                     if fn:
-                        nach_gegen_modul = Path(fn.replace("\\", "/")).stem or None
+                        next_opposite_module = Path(fn.replace("\\", "/")).stem or None
 
             # Signale
             signals = []
             for sig in signal_els:
-                sig_typ = sig.get("SignalTyp", "0")
+                sig_type = sig.get("SignalTyp", "0")
                 sig_name = sig.get("Signalname", "")
-                frame_dateien = [
+                frame_files = [
                     d_el.get("Dateiname", "")
                     for sf_el in sig.findall("SignalFrame")
                     for d_el in [sf_el.find("Datei")]
                     if d_el is not None and d_el.get("Dateiname", "")
                 ]
-                signals.append({
-                    "typ": sig_typ,
-                    "name": sig_name,
-                    "frame_dateien": frame_dateien,
-                    "bounding_r": float(sig.get("BoundingR", "0") or "0"),
-                    "betriebsstelle": sig.get("NameBetriebsstelle", "") or "",
-                })
+                signals.append(
+                    {
+                        "type": sig_type,
+                        "name": sig_name,
+                        "frame_files": frame_files,
+                        "bounding_r": float(sig.get("BoundingR", "0") or "0"),
+                        "operating_point": sig.get("NameBetriebsstelle", "") or "",
+                    }
+                )
 
             connection = int(se.get("Anschluss", "0"))
 
@@ -275,10 +277,10 @@ class st3Converter:
                 "g_coord": (gx, gy),
                 "b_coord": (bx, by),
                 "km": km_val,
-                "nach_norm": nach_norm,
-                "nach_gegen": nach_gegen,
-                "nach_norm_modul": nach_norm_modul,
-                "nach_gegen_modul": nach_gegen_modul,
+                "next_norm": next_norm,
+                "next_opposite": next_opposite,
+                "next_norm_module": next_norm_module,
+                "next_opposite_module": next_opposite_module,
                 "signals": signals,
                 "connection": connection,
             }
@@ -296,18 +298,18 @@ class st3Converter:
 
         for nr, elem in elems.items():
             connection = elem["connection"]
-            for i, aft_nr in enumerate(elem["nach_norm"]):
+            for i, aft_nr in enumerate(elem["next_norm"]):
                 if aft_nr not in elems:
                     continue
-                seite = _successor_side(connection, i, "NORM")
-                uf.union((nr, "b"), (aft_nr, seite))
-            for j, aft_nr in enumerate(elem["nach_gegen"]):
+                side = _successor_side(connection, i, "NORM")
+                uf.union((nr, "b"), (aft_nr, side))
+            for j, aft_nr in enumerate(elem["next_opposite"]):
                 if aft_nr not in elems:
                     continue
-                seite = _successor_side(connection, j, "GEGEN")
-                uf.union((nr, "g"), (aft_nr, seite))
+                side = _successor_side(connection, j, "GEGEN")
+                uf.union((nr, "g"), (aft_nr, side))
 
-        # vertex_inc[vertex_root] → [(elem_nr, seite), …]
+        # vertex_inc[vertex_root] → [(elem_nr, side), …]
         vertex_inc = {}
         for nr in elems:
             for side in ("g", "b"):
@@ -323,12 +325,12 @@ class st3Converter:
         """Rückgabe: dict vertex_id → nachbarmodul_stem"""
         module_vertices = {}
         for nr, elem in elems.items():
-            if elem["nach_norm_modul"]:
+            if elem["next_norm_module"]:
                 v = uf.find((nr, "b"))
-                module_vertices[v] = elem["nach_norm_modul"]
-            if elem["nach_gegen_modul"]:
+                module_vertices[v] = elem["next_norm_module"]
+            if elem["next_opposite_module"]:
                 v = uf.find((nr, "g"))
-                module_vertices[v] = elem["nach_gegen_modul"]
+                module_vertices[v] = elem["next_opposite_module"]
         return module_vertices
 
     # Schritt 4 – Breakpoints klassifizieren
@@ -345,17 +347,17 @@ class st3Converter:
             is_module = v in module_vertices
 
             # Knotentypen an diesem Vertex bestimmen
-            typen = []
+            node_types = []
             if is_module:
-                typen.append("Modulgrenze")
+                node_types.append("Modulgrenze")
                 if extent >= 3:
-                    typen.append("Weiche")
+                    node_types.append("Weiche")
             elif extent == 1:
-                typen.append("Gleisende")
+                node_types.append("Gleisende")
             elif extent >= 3:
-                typen.append("Weiche")
+                node_types.append("Weiche")
 
-            if not typen:
+            if not node_types:
                 continue  # Grad 2, kein Modulverweis → kein Breakpoint
 
             bp_set.add(v)
@@ -368,59 +370,61 @@ class st3Converter:
             # Signal-Attribute (alle Elemente an diesem Vertex prüfen)
             signal_name = None
             bst_name = None
-            knotenbeschr = ""
-            knotenbeschr_r = 0.0
+            node_desc = ""
+            node_desc_radius = 0.0
             for elem_nr, _ in inc:
                 elem = elems.get(elem_nr, {})
                 for sig in elem.get("signals", []):
-                    if sig.get("typ") in ("1", "2"):
+                    if sig.get("type") in ("1", "2"):
                         if not signal_name:
                             signal_name = sig.get("name") or None
                         if not bst_name:
-                            bst_name = sig.get("betriebsstelle") or None
-                        if not knotenbeschr:
-                            for fd in sig.get("frame_dateien", []):
+                            bst_name = sig.get("operating_point") or None
+                        if not node_desc:
+                            for fd in sig.get("frame_files", []):
                                 idx = fd.lower().find("_schienen")
                                 if idx >= 0:
-                                    knotenbeschr = (
+                                    node_desc = (
                                         fd[:idx]
                                         .replace("\\", "/")
                                         .split("/")[-1]
                                         .strip("_")
                                     )
-                                    knotenbeschr_r = sig.get("bounding_r", 0.0)
+                                    node_desc_radius = sig.get("bounding_r", 0.0)
                                     break
 
             # Knotenname und Feature-Dict pro Typ anlegen
             suffix_map = {"Modulgrenze": "G", "Gleisende": "E"}
-            for typ in typen:
+            for node_type in node_types:
                 if signal_name:
-                    if typ == "Weiche" and self._normalize_switch_names:
-                        knotenname = self._normalize_switch_name(signal_name)
+                    if node_type == "Weiche" and self._normalize_switch_names:
+                        node_name = self._normalize_switch_name(signal_name)
                     else:
-                        knotenname = signal_name
+                        node_name = signal_name
                 else:
-                    suffix = suffix_map.get(typ, "X")
-                    knotenname = f"{self._stem}_{repr_nr}{suffix}"
+                    suffix = suffix_map.get(node_type, "X")
+                    node_name = f"{self._stem}_{repr_nr}{suffix}"
 
-                nodes_raw.append({
-                    "vertex": v,
-                    "typ": typ,
-                    "knotenname": knotenname,
-                    "bst_name": bst_name if typ == "Weiche" else None,
-                    "knotenbeschr": knotenbeschr,
-                    "knotenbeschr_r": knotenbeschr_r,
-                    "nr": repr_nr,
-                    "km": repr_elem.get("km"),
-                    "datei": self._stem,
-                    "nachbarmodul": module_vertices.get(v, "")
-                    if typ == "Modulgrenze"
-                    else "",
-                    "repr_side": repr_side,
-                    "repr_coord_utm": repr_elem["g_coord"]
-                    if repr_side == "g"
-                    else repr_elem["b_coord"],
-                })
+                nodes_raw.append(
+                    {
+                        "vertex": v,
+                        "typ": node_type,
+                        "knotenname": node_name,
+                        "bst_name": bst_name if node_type == "Weiche" else None,
+                        "knotenbeschr": node_desc,
+                        "knotenbeschr_r": node_desc_radius,
+                        "nr": repr_nr,
+                        "km": repr_elem.get("km"),
+                        "datei": self._stem,
+                        "nachbarmodul": module_vertices.get(v, "")
+                        if node_type == "Modulgrenze"
+                        else "",
+                        "repr_side": repr_side,
+                        "repr_coord_utm": repr_elem["g_coord"]
+                        if repr_side == "g"
+                        else repr_elem["b_coord"],
+                    }
+                )
 
         self._propagate_node_desc(nodes_raw)
         return bp_set, nodes_raw
@@ -467,16 +471,18 @@ class st3Converter:
         Radius erhält dieselbe Bauform-Beschriftung, sofern er noch keine hat.
         """
         labeled = [
-            kn
-            for kn in nodes_raw
-            if kn["typ"] == "Weiche"
-            and kn["knotenbeschr"]
-            and kn.get("knotenbeschr_r", 0.0) > 0.0
+            node
+            for node in nodes_raw
+            if node["typ"] == "Weiche"
+            and node["knotenbeschr"]
+            and node.get("knotenbeschr_r", 0.0) > 0.0
         ]
         if not labeled:
             return
         unlabeled = [
-            kn for kn in nodes_raw if kn["typ"] == "Weiche" and not kn["knotenbeschr"]
+            node
+            for node in nodes_raw
+            if node["typ"] == "Weiche" and not node["knotenbeschr"]
         ]
         for src in labeled:
             sx, sy = src["repr_coord_utm"]
@@ -502,7 +508,7 @@ class st3Converter:
                 logger.warning(msg)
 
         # Hochgradige Vertices (Grad ≥ 5)
-        for v, inc in vertex_inc.items():
+        for inc in vertex_inc.values():
             if len(inc) >= 5:
                 repr_nr = min(nr for (nr, _) in inc)
                 coord = elems[repr_nr]["g_coord"]
@@ -515,14 +521,14 @@ class st3Converter:
 
         # Koordinaten-Abweichung > 5 cm bei topologisch verbundenen Seiten
         for nr, elem in elems.items():
-            for i, aft_nr in enumerate(elem["nach_norm"]):
+            for i, aft_nr in enumerate(elem["next_norm"]):
                 if aft_nr not in elems:
                     continue
-                seite = _successor_side(elem["connection"], i, "NORM")
+                side = _successor_side(elem["connection"], i, "NORM")
                 coord_a = elem["b_coord"]
                 coord_b = (
                     elems[aft_nr]["g_coord"]
-                    if seite == "g"
+                    if side == "g"
                     else elems[aft_nr]["b_coord"]
                 )
                 dx = coord_a[0] - coord_b[0]
@@ -531,7 +537,7 @@ class st3Converter:
                     dist = math.sqrt(dx * dx + dy * dy)
                     msg = (
                         f"Koordinatenabweichung {dist:.3f} m zwischen "
-                        f"Element {nr}.b und Element {aft_nr}.{seite} "
+                        f"Element {nr}.b und Element {aft_nr}.{side} "
                         f"(NachNorm[{i}])."
                     )
                     self.warnings.append(msg)
@@ -542,7 +548,7 @@ class st3Converter:
         elem_uf = _UnionFind()
         for nr in elems:
             elem_uf.find(nr)
-        for v, inc in vertex_inc.items():
+        for inc in vertex_inc.values():
             nrs = [nr for (nr, _) in inc]
             for k in range(1, len(nrs)):
                 elem_uf.union(nrs[0], nrs[k])
@@ -616,15 +622,15 @@ class st3Converter:
                     return k0 if dl == 0 else k0 + (pos - l0) * (k1 - k0) / dl
             return None
 
-        km_von = elems[elem_seq[0]].get("km")
-        if km_von is None:
-            km_von = _interp(0.0)
+        km_from = elems[elem_seq[0]].get("km")
+        if km_from is None:
+            km_from = _interp(0.0)
 
-        km_bis = elems[elem_seq[-1]].get("km")
-        if km_bis is None:
-            km_bis = _interp(s[-1])
+        km_to = elems[elem_seq[-1]].get("km")
+        if km_to is None:
+            km_to = _interp(s[-1])
 
-        return km_von, km_bis
+        return km_from, km_to
 
     @staticmethod
     def _fill_node_km_from_edges(nodes_raw, edges_raw):
@@ -635,9 +641,9 @@ class st3Converter:
                 name_to_km.setdefault(edge["knotenname_von"], edge["km_von"])
             if edge["knotenname_bis"] and edge["km_bis"] is not None:
                 name_to_km.setdefault(edge["knotenname_bis"], edge["km_bis"])
-        for kn in nodes_raw:
-            if kn["km"] is None:
-                kn["km"] = name_to_km.get(kn["knotenname"])
+        for node in nodes_raw:
+            if node["km"] is None:
+                node["km"] = name_to_km.get(node["knotenname"])
 
     def _traverse_edges(self, elems, vertex_inc, uf, bp_set, nodes_raw):
         """Baut Kanten durch Walk-Traversierung auf.
@@ -648,19 +654,21 @@ class st3Converter:
         v_to_name: dict = {}
         # Betriebsstellen-Lookup: vertex_id → bst_name (nur Weichenknoten)
         v_to_bst: dict = {}
-        for kn in nodes_raw:
-            v = kn["vertex"]
-            if v not in v_to_name or kn["typ"] == "Weiche":
-                v_to_name[v] = kn["knotenname"]
-            if kn["typ"] == "Weiche" and kn.get("bst_name"):
-                v_to_bst[v] = kn["bst_name"]
+        for node in nodes_raw:
+            v = node["vertex"]
+            if v not in v_to_name or node["typ"] == "Weiche":
+                v_to_name[v] = node["knotenname"]
+            if node["typ"] == "Weiche" and node.get("bst_name"):
+                v_to_bst[v] = node["bst_name"]
 
         visited: set = set()  # besuchte elem_nr
-        kanten = []
-        kante_id = 1
+        edges = []
+        edge_id = 1
 
-        # Walk von jedem Breakpoint aus
-        for bp_v in bp_set:
+        # Walk von jedem Breakpoint aus, sortiert nach (Element-Nr, Seite): bp_set ist ein
+        # Set, dessen Reihenfolge von der Hash-Randomisierung abhängt; so bleiben Kanten-IDs
+        # und Kantenreihenfolge bei jedem Lauf gleich.
+        for bp_v in sorted(bp_set):
             for elem_nr, entry_side in vertex_inc[bp_v]:
                 if elem_nr in visited:
                     continue
@@ -670,22 +678,24 @@ class st3Converter:
                 if result is None:
                     continue
                 elem_seq, pts_utm, exit_v = result
-                km_von, km_bis = self._interpolate_km(elem_seq, pts_utm, elems)
-                kanten.append({
-                    "id": kante_id,
-                    "elem_sequence": elem_seq,
-                    "pts_utm": pts_utm,
-                    "knotenname_von": v_to_name.get(bp_v),
-                    "knotenname_bis": v_to_name.get(exit_v),
-                    "bst_von": v_to_bst.get(bp_v),
-                    "bst_bis": v_to_bst.get(exit_v),
-                    "km_von": km_von,
-                    "km_bis": km_bis,
-                    "strelemente_anz": len(elem_seq),
-                    "strelement_von": elem_seq[0],
-                    "strelement_bis": elem_seq[-1],
-                })
-                kante_id += 1
+                km_from, km_to = self._interpolate_km(elem_seq, pts_utm, elems)
+                edges.append(
+                    {
+                        "id": edge_id,
+                        "elem_sequence": elem_seq,
+                        "pts_utm": pts_utm,
+                        "knotenname_von": v_to_name.get(bp_v),
+                        "knotenname_bis": v_to_name.get(exit_v),
+                        "bst_von": v_to_bst.get(bp_v),
+                        "bst_bis": v_to_bst.get(exit_v),
+                        "km_von": km_from,
+                        "km_bis": km_to,
+                        "strelemente_anz": len(elem_seq),
+                        "strelement_von": elem_seq[0],
+                        "strelement_bis": elem_seq[-1],
+                    }
+                )
+                edge_id += 1
 
         # Reine Zyklen (unbesuchte Elemente → keine Breakpoints in Komponente)
         for nr in elems:
@@ -701,24 +711,26 @@ class st3Converter:
             )
             self.warnings.append(msg)
             logger.warning(msg)
-            km_von, km_bis = self._interpolate_km(elem_seq, pts_utm, elems)
-            kanten.append({
-                "id": kante_id,
-                "elem_sequence": elem_seq,
-                "pts_utm": pts_utm,
-                "knotenname_von": None,
-                "knotenname_bis": None,
-                "bst_von": None,
-                "bst_bis": None,
-                "km_von": km_von,
-                "km_bis": km_bis,
-                "strelemente_anz": len(elem_seq),
-                "strelement_von": elem_seq[0],
-                "strelement_bis": elem_seq[-1],
-            })
-            kante_id += 1
+            km_from, km_to = self._interpolate_km(elem_seq, pts_utm, elems)
+            edges.append(
+                {
+                    "id": edge_id,
+                    "elem_sequence": elem_seq,
+                    "pts_utm": pts_utm,
+                    "knotenname_von": None,
+                    "knotenname_bis": None,
+                    "bst_von": None,
+                    "bst_bis": None,
+                    "km_von": km_from,
+                    "km_bis": km_to,
+                    "strelemente_anz": len(elem_seq),
+                    "strelement_von": elem_seq[0],
+                    "strelement_bis": elem_seq[-1],
+                }
+            )
+            edge_id += 1
 
-        return kanten
+        return edges
 
     def _walk(self, start_elem, entry_side, elems, vertex_inc, uf, bp_set, visited):
         """Walk von start_elem (Eintritt entry_side) bis zum nächsten Breakpoint.
@@ -854,10 +866,10 @@ class st3Converter:
             return list(zip(txs, tys))
 
         # In-Place: vermeidet vollständige Dict-Kopie pro Feature
-        for k in edges_raw:
-            k["pts"] = _tf_pts(k["pts_utm"])
-        for kn in nodes_raw:
-            kn["coord"] = _tf_point(kn["repr_coord_utm"])
+        for edge in edges_raw:
+            edge["pts"] = _tf_pts(edge["pts_utm"])
+        for node in nodes_raw:
+            node["coord"] = _tf_point(node["repr_coord_utm"])
         return edges_raw, nodes_raw
 
     # Schritt 8 – Layer-Ausgabe
@@ -869,38 +881,42 @@ class st3Converter:
             'geometry' und 'attrs'.
         """
         edges_out = []
-        for k in edges_tf:
-            edges_out.append({
-                "geometry": k["pts"],  # list of (x, y)
-                "attrs": {
-                    "id": k["id"],
-                    "knotenname_von": k["knotenname_von"],
-                    "knotenname_bis": k["knotenname_bis"],
-                    "bst_von": k.get("bst_von"),
-                    "bst_bis": k.get("bst_bis"),
-                    "km_von": k["km_von"],
-                    "km_bis": k["km_bis"],
-                    "strelemente_anz": k["strelemente_anz"],
-                    "strelement_von": k["strelement_von"],
-                    "strelement_bis": k["strelement_bis"],
-                },
-            })
+        for edge in edges_tf:
+            edges_out.append(
+                {
+                    "geometry": edge["pts"],  # list of (x, y)
+                    "attrs": {
+                        "id": edge["id"],
+                        "knotenname_von": edge["knotenname_von"],
+                        "knotenname_bis": edge["knotenname_bis"],
+                        "bst_von": edge.get("bst_von"),
+                        "bst_bis": edge.get("bst_bis"),
+                        "km_von": edge["km_von"],
+                        "km_bis": edge["km_bis"],
+                        "strelemente_anz": edge["strelemente_anz"],
+                        "strelement_von": edge["strelement_von"],
+                        "strelement_bis": edge["strelement_bis"],
+                    },
+                }
+            )
 
         nodes_out = []
-        for i, kn in enumerate(nodes_tf, 1):
-            nodes_out.append({
-                "geometry": kn["coord"],  # (x, y)
-                "attrs": {
-                    "id": i,
-                    "knotenname": kn["knotenname"],
-                    "bst_name": kn.get("bst_name"),
-                    "typ": kn["typ"],
-                    "knotenbeschr": kn["knotenbeschr"],
-                    "strelement_nr": kn["nr"],
-                    "km": kn["km"],
-                    "datei": kn["datei"],
-                    "nachbarmodul": kn["nachbarmodul"],
-                },
-            })
+        for i, node in enumerate(nodes_tf, 1):
+            nodes_out.append(
+                {
+                    "geometry": node["coord"],  # (x, y)
+                    "attrs": {
+                        "id": i,
+                        "knotenname": node["knotenname"],
+                        "bst_name": node.get("bst_name"),
+                        "typ": node["typ"],
+                        "knotenbeschr": node["knotenbeschr"],
+                        "strelement_nr": node["nr"],
+                        "km": node["km"],
+                        "datei": node["datei"],
+                        "nachbarmodul": node["nachbarmodul"],
+                    },
+                }
+            )
 
         return nodes_out, edges_out

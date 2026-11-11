@@ -16,11 +16,11 @@ if _parent not in sys.path:
     sys.path.insert(0, _parent)
 
 # --- Drittanbieter-Bibliotheken ---
-import geopandas as gpd  # noqa: E402
-from shapely.geometry import LineString, Point, Polygon  # noqa: E402
+import geopandas as gpd
+from shapely.geometry import LineString, Point, Polygon
 
 # --- Module ---
-from core.core import VERSION, Config, print  # noqa: E402
+from core.core import VERSION, Config, print
 
 
 # EPSG-Auswahl
@@ -273,7 +273,7 @@ def _ask_output_and_confirm(input_file: Path, config) -> tuple | None:
             try:
                 output_dir.mkdir(parents=True, exist_ok=True)
                 print(f"  ✓ Verzeichnis erstellt: {output_dir}")
-            except Exception as e:
+            except OSError as e:
                 print(f"  [FEHLER] Verzeichnis konnte nicht erstellt werden: {e}")
                 print(f"  Verwende Standard: {default_output_dir}")
                 output_dir = default_output_dir
@@ -443,8 +443,8 @@ def interactive_mode() -> tuple | None:
 def main():
     """Hauptfunktion für das CLI."""
     # Lazy imports um zirkuläre Importe zu vermeiden
-    from convert.convert_envelope import convert_envelope  # noqa: PLC0415
-    from st3_converter import st3Converter  # noqa: PLC0415
+    from convert.convert_envelope import convert_envelope
+    from st3_converter import St3Converter
 
     parser = argparse.ArgumentParser(
         description=(
@@ -553,7 +553,7 @@ Beispielaufrufe:
         }
 
         try:
-            converter = st3Converter(
+            converter = St3Converter(
                 str(input_file),
                 target_epsg=config["target_epsg"],
                 auto_detect_crs=config["auto_detect_crs"],
@@ -589,7 +589,8 @@ Beispielaufrufe:
         except KeyboardInterrupt:
             print("\n[INFO] Konvertierung abgebrochen.", file=sys.stderr)
             sys.exit(1)
-        except Exception as e:
+        # Programmgrenze: jeden Fehler der Konvertierung mit Traceback melden
+        except Exception as e:  # noqa: BLE001
             print(f"\n[FEHLER] Konvertierung fehlgeschlagen: {e}", file=sys.stderr)
             traceback.print_exc()
             sys.exit(1)
@@ -605,7 +606,7 @@ Beispielaufrufe:
             input_file, output_file, config = result
 
             try:
-                converter = st3Converter(
+                converter = St3Converter(
                     str(input_file),
                     target_epsg=config["target_epsg"],
                     auto_detect_crs=config.get("auto_detect_crs", True),
@@ -647,7 +648,8 @@ Beispielaufrufe:
             except KeyboardInterrupt:
                 print("\n\n[INFO] Konvertierung abgebrochen.")
                 input("\nDrücken Sie Enter, um zum Hauptmenü zurückzukehren...")
-            except Exception as e:
+            # Programmgrenze: Fehler mit Traceback melden, dann zurück zum Hauptmenü
+            except Exception as e:  # noqa: BLE001
                 print(f"\n[FEHLER] Konvertierung fehlgeschlagen: {e}", file=sys.stderr)
                 traceback.print_exc()
                 input("\nDrücken Sie Enter, um zum Hauptmenü zurückzukehren...")

@@ -12,11 +12,11 @@ abzuleitende **Knoten-Kanten-Modell**.
 Zusi 3 speichert Streckennetze als XML-Dateien mit geometrischen und topologischen
 Informationen. Ziel ist es, diese in zwei Datensätze:
 
-| Layer | Geometrietyp | Inhalt |
-|---|---|---|
-| `Gleiskante` | LineString | Gleisabschnitte zwischen Knoten |
-| `Gleisknoten` | Point | Weichen, Modulgrenzen, Gleisenden |
-| `Hüllkurve` ¹ | Polygon | Umgrenzungspolygon des Streckenmoduls (Geländeformer) |
+| Layer         | Geometrietyp | Inhalt                                                |
+| ------------- | ------------ | ----------------------------------------------------- |
+| `Gleiskante`  | LineString   | Gleisabschnitte zwischen Knoten                       |
+| `Gleisknoten` | Point        | Weichen, Modulgrenzen, Gleisenden                     |
+| `Hüllkurve` ¹ | Polygon      | Umgrenzungspolygon des Streckenmoduls (Geländeformer) |
 
 ¹ Optional; nur wenn **Hüllkurve importieren** aktiviert ist.
 
@@ -48,9 +48,9 @@ Gleistopologie (Knoten-Kanten-Modell):
   Legende:  ◉ = Gleisknoten   ─── / ═══ = Gleiskante (LineString)
 ```
 
-*Abb.: Beziehung zwischen Gleisgeometrie und Gleistopologie.
+_Abb.: Beziehung zwischen Gleisgeometrie und Gleistopologie.
 Mehrere StrElemente zwischen zwei Gleisknoten bilden eine Gleiskante.
-Parallelgleise zwischen denselben Knoten werden als separate LineString-Features geführt.*
+Parallelgleise zwischen denselben Knoten werden als separate LineString-Features geführt._
 
 ### Gleisknoten
 
@@ -69,13 +69,13 @@ Vertex-Grad explizit aus `<NachNormModul>`/`<NachGegenModul>`-Einträgen registr
 Anschluss aber auch Grad 2 aufweisen und wäre dann koordinatentopologisch nicht
 erkennbar):
 
-| Vertex-Grad | Knotentyp | Beispiele |
-|---|---|---|
-| beliebig + `NachNormModul`/`NachGegenModul` am betroffenen Element | `Modulgrenze` | `Freudenstein_96G` |
-| 1 (kein Modulverweis) | `Gleisende` | `Freudenstein_12E` |
-| 3 | `Weiche` (Weichenspitze EW, EKW-Arm, DKW-Arm …) | W21 |
-| 4 | `Weiche` (Kreuzungspunkt KR, EKW-Zentrum, DKW-Herzstück …) | K47 |
-| ≥ 5 | `Weiche` (seltener Sonderfall – Warnung wird geloggt) | – |
+| Vertex-Grad                                                        | Knotentyp                                                  | Beispiele          |
+| ------------------------------------------------------------------ | ---------------------------------------------------------- | ------------------ |
+| beliebig + `NachNormModul`/`NachGegenModul` am betroffenen Element | `Modulgrenze`                                              | `Freudenstein_96G` |
+| 1 (kein Modulverweis)                                              | `Gleisende`                                                | `Freudenstein_12E` |
+| 3                                                                  | `Weiche` (Weichenspitze EW, EKW-Arm, DKW-Arm …)            | W21                |
+| 4                                                                  | `Weiche` (Kreuzungspunkt KR, EKW-Zentrum, DKW-Herzstück …) | K47                |
+| ≥ 5                                                                | `Weiche` (seltener Sonderfall – Warnung wird geloggt)      | –                  |
 
 Tritt ein Modulverweis und Grad ≥ 3 am selben Vertex auf (Modulgrenze an einer
 Weichenspitze), werden **beide Knoten angelegt**: ein `Modulgrenze`-Knoten und ein
@@ -89,7 +89,7 @@ und jedes Herzstück oder jede Kreuzung (Grad 4) wird ein eigener Knoten, verbun
 durch kurze Kanten. Nicht alle Grad-3-Vertices gehen auf ein Fkt=4-Element zurück –
 bei komplexen Weichen entstehen weitere Verzweigungspunkte aus anderen
 Weichenbausatz-Elementen (z. B. Fkt=12, 20, 28). Ein Fkt=4-Element ist daher
-*keine* notwendige Bedingung für einen Weichenknoten; maßgeblich ist ausschließlich
+_keine_ notwendige Bedingung für einen Weichenknoten; maßgeblich ist ausschließlich
 der Vertex-Grad.
 
 Signal-Elemente in der `.st3` dienen ausschließlich der **Benennung**: liegt an einem
@@ -175,12 +175,12 @@ loggt sie daher als Warnung mit Elementanzahl und geografischer Ausdehnung.
 
 Kanten und Knoten teilen einen gemeinsamen **Namensschlüssel**:
 
-| Kanten-Layer | Knoten-Layer |
-|---|---|
+| Kanten-Layer     | Knoten-Layer |
+| ---------------- | ------------ |
 | `knotenname_von` | `knotenname` |
 | `knotenname_bis` | `knotenname` |
-| `bst_von` | `bst_name` |
-| `bst_bis` | `bst_name` |
+| `bst_von`        | `bst_name`   |
+| `bst_bis`        | `bst_name`   |
 
 `knotenname_von`/`knotenname_bis` können `NULL` sein, wenn am Endpunkt kein
 benannter Knoten liegt. `bst_von`/`bst_bis` sind nur gefüllt, wenn der jeweilige
@@ -213,9 +213,9 @@ eine g-Seite (Gegenrichtungs-Endpunkt) und eine b-Seite (Normrichtungs-Endpunkt)
 
 **Verbindungsregeln:**
 
-| Verweis an E | Verbindet | Nachfolger-Seite |
-|---|---|---|
-| `<NachNorm Nr="i">` | E.**b** ↔ i.? | `g` wenn `Anschluss`-Bit = 0, sonst `b` |
+| Verweis an E         | Verbindet     | Nachfolger-Seite                        |
+| -------------------- | ------------- | --------------------------------------- |
+| `<NachNorm Nr="i">`  | E.**b** ↔ i.? | `g` wenn `Anschluss`-Bit = 0, sonst `b` |
 | `<NachGegen Nr="j">` | E.**g** ↔ j.? | `g` wenn `Anschluss`-Bit = 0, sonst `b` |
 
 Das zugehörige Anschluss-Bit ergibt sich für den i-ten Norm-Nachfolger aus Bit `i`
@@ -243,7 +243,7 @@ Jede resultierende Äquivalenzklasse ist ein **Vertex**. Für jeden Vertex wird 
 Inzidenzliste geführt:
 
 ```
-vertex_inc[vertex_id] → [(elem_nr, seite), …]   # seite ∈ {"g", "b"}
+vertex_inc[vertex_id] → [(elem_nr, side), …]   # side ∈ {"g", "b"}
 ```
 
 Der **Grad** eines Vertex ist `len(vertex_inc[vertex_id])`.
@@ -265,11 +265,11 @@ auch 2 sein kann).
 
 Ein Vertex ist ein **Breakpoint**, wenn:
 
-| Bedingung | Knotentyp |
-|---|---|
-| Grad = 1, kein Modulverweis | `Gleisende` |
-| Modulverweis vorhanden (beliebiger Grad) | `Modulgrenze` |
-| Grad ≥ 3 | `Weiche` (Weichenspitze, Herzstück oder Kreuzungspunkt) |
+| Bedingung                                | Knotentyp                                               |
+| ---------------------------------------- | ------------------------------------------------------- |
+| Grad = 1, kein Modulverweis              | `Gleisende`                                             |
+| Modulverweis vorhanden (beliebiger Grad) | `Modulgrenze`                                           |
+| Grad ≥ 3                                 | `Weiche` (Weichenspitze, Herzstück oder Kreuzungspunkt) |
 
 Signal-Attribute (`Signalname` sowie Weichenbauart aus dem SignalFrame-Dateinamen → `knotenbeschr`)
 werden dem Knoten angehängt, wenn ein angrenzendes StrElement ein Signal mit `SignalTyp="2"` trägt.
@@ -289,16 +289,16 @@ Das Normalisieren ist standardmäßig aktiv und kann im Einstellungsmenü
 (Option **4. Namen von Weichenknoten normalisieren**) oder
 im CLI per `--no-normalize-switches` deaktiviert werden.
 
-| Eingangsname | Normalisierter `knotenname` | Anmerkung |
-|---|---|---|
-| `W 1` | `1` | |
-| `EW 135` | `135` | |
-| `DKW 3 A` | `3A` | |
-| `DKW 3 a/b` | `3A/B` | |
-| `DKW 3 c/d` | `3C/D` | |
-| `44W1` | `1` | ESTW: Bereichskennziffer wird ignoriert |
-| `44EW135` | `135` | ESTW: Bereichskennziffer wird ignoriert |
-| `44DKW3A` | `3A` | ESTW: Bereichskennziffer wird ignoriert |
+| Eingangsname | Normalisierter `knotenname` | Anmerkung                               |
+| ------------ | --------------------------- | --------------------------------------- |
+| `W 1`        | `1`                         |                                         |
+| `EW 135`     | `135`                       |                                         |
+| `DKW 3 A`    | `3A`                        |                                         |
+| `DKW 3 a/b`  | `3A/B`                      |                                         |
+| `DKW 3 c/d`  | `3C/D`                      |                                         |
+| `44W1`       | `1`                         | ESTW: Bereichskennziffer wird ignoriert |
+| `44EW135`    | `135`                       | ESTW: Bereichskennziffer wird ignoriert |
+| `44DKW3A`    | `3A`                        | ESTW: Bereichskennziffer wird ignoriert |
 
 Modulgrenz- und Gleisende-Knoten werden **nicht** normalisiert; dort wird der Signalname
 direkt übernommen (in der Praxis tragen diese Knotentypen selten ein Signal vom Typ 2).
@@ -317,12 +317,12 @@ Diese Propagierung erfolgt noch vor Schritt 5, auf UTM-Koordinaten (vor der KBS-
 Vor der Traversierung werden folgende Konsistenzprüfungen durchgeführt; Abweichungen
 werden als Warnung geloggt und beeinflussen den Import nicht:
 
-| Prüfung | Bedingung | Aktion |
-|---|---|---|
-| Nulllängen-Element | g-Koordinate == b-Koordinate | Warnung, Element wird übersprungen |
-| Hochgradiger Vertex | Grad ≥ 5 | Warnung mit Vertex-Position und Grad |
-| Isolierte Komponente | Zusammenhangskomponente ohne jeglichen Breakpoint (kein Vertex mit Grad 1, Grad ≥ 3 oder Modulverweis) | Warnung (möglicher Modellierungsfehler) |
-| Koordinaten-Abweichung | Koordinaten zweier per `NachNorm`/`NachGegen` verbundener Element-Seiten liegen > 5 cm auseinander | Warnung (Datenfehler im .st3) |
+| Prüfung                | Bedingung                                                                                              | Aktion                                  |
+| ---------------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------- |
+| Nulllängen-Element     | g-Koordinate == b-Koordinate                                                                           | Warnung, Element wird übersprungen      |
+| Hochgradiger Vertex    | Grad ≥ 5                                                                                               | Warnung mit Vertex-Position und Grad    |
+| Isolierte Komponente   | Zusammenhangskomponente ohne jeglichen Breakpoint (kein Vertex mit Grad 1, Grad ≥ 3 oder Modulverweis) | Warnung (möglicher Modellierungsfehler) |
+| Koordinaten-Abweichung | Koordinaten zweier per `NachNorm`/`NachGegen` verbundener Element-Seiten liegen > 5 cm auseinander     | Warnung (Datenfehler im .st3)           |
 
 Die vierte Prüfung ist der Cross-Check zwischen der topologischen Verbindung aus
 Schritt 2 und der geometrischen Übereinstimmung aus den `<g>`/`<b>`-Koordinaten.
@@ -330,7 +330,9 @@ Schritt 2 und der geometrischen Übereinstimmung aus den `<g>`/`<b>`-Koordinaten
 ### Schritt 6 – Graphtraversierung: Kanten bilden
 
 Von jedem Breakpoint B aus wird für jede anliegende Kante ein **Walk** gestartet,
-sofern das Element noch nicht besucht ist:
+sofern das Element noch nicht besucht ist. Die Breakpoints werden dabei nach
+(Element-Nr, Seite) sortiert durchlaufen, damit Kanten-IDs und Reihenfolge der
+Kanten bei jedem Lauf gleich sind:
 
 ```
 Walk(B, elem, entry_side):
@@ -373,7 +375,7 @@ DHDN/Gauß-Krüger Zone 3).
 
 ### Schritt 8 – Layer-Ausgabe
 
-`st3Converter.convert()` gibt zwei Listen von Feature-Dicts zurück:
+`St3Converter.convert()` gibt zwei Listen von Feature-Dicts zurück:
 
 ```python
 nodes_features, edges_features = converter.convert()
@@ -388,10 +390,10 @@ nodes_features, edges_features = converter.convert()
 
 Die Weiterverarbeitung der Feature-Dicts ist aufruferabhängig:
 
-| Kontext | Ausgabe |
-|---|---|
-| Python-Bibliothek (`st3Converter.convert()`) | Gibt `(nodes_features, edges_features)` zurück — Feature-Listen ohne GeoPackage-Schreibzugriff |
-| CLI (`core/cli.py`) | GeoPackage mit Layern `Gleiskante` / `Gleisknoten` / optional `Hüllkurve` (via `geopandas`/`shapely`) |
+| Kontext                                      | Ausgabe                                                                                               |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Python-Bibliothek (`St3Converter.convert()`) | Gibt `(nodes_features, edges_features)` zurück — Feature-Listen ohne GeoPackage-Schreibzugriff        |
+| CLI (`core/cli.py`)                          | GeoPackage mit Layern `Gleiskante` / `Gleisknoten` / optional `Hüllkurve` (via `geopandas`/`shapely`) |
 
 ## Hüllkurven-Import
 
@@ -435,7 +437,7 @@ beim Erstellen des WKT/`shapely.Polygon` automatisch.
 ### Implementierung (`convert/convert_envelope.py`)
 
 Die Funktion `convert_envelope()` im Unterpaket `convert/` kann eigenständig oder
-optimiert zusammen mit `st3Converter` aufgerufen werden:
+optimiert zusammen mit `St3Converter` aufgerufen werden:
 
 ```python
 convert_envelope(
@@ -476,14 +478,13 @@ pyproj-Datenbank-Lookup.
 
 ### Steuerung
 
-| Kontext | Option |
-|---|---|
-| CLI | `--import-envelope` / `--no-import-envelope` |
-| Einstellungsmenü (interaktiv) | Option **7. Hüllkurve importieren** |
-| `Config`-Schlüssel | `import_envelope` (bool, Default `true`) |
+| Kontext                       | Option                                       |
+| ----------------------------- | -------------------------------------------- |
+| CLI                           | `--import-envelope` / `--no-import-envelope` |
+| Einstellungsmenü (interaktiv) | Option **7. Hüllkurve importieren**          |
+| `Config`-Schlüssel            | `import_envelope` (bool, Default `true`)     |
 
 ---
-
 
 ---
 
@@ -542,10 +543,10 @@ das Streckennetz eines geografischen Moduls (Ausschnitt).
 In der Zusi-Programmoberfläche werden ausschließlich die Begriffe **blaue** und **grüne
 Richtung** verwendet. Im Dateiformat entsprechen diese:
 
-| Dateiformat | Programmoberfläche | XML-Element |
-|---|---|---|
-| Normrichtung | blau | `<b>` (b-Endpunkt des StrElements) |
-| Gegenrichtung | grün | `<g>` (g-Endpunkt des StrElements) |
+| Dateiformat   | Programmoberfläche | XML-Element                        |
+| ------------- | ------------------ | ---------------------------------- |
+| Normrichtung  | blau               | `<b>` (b-Endpunkt des StrElements) |
+| Gegenrichtung | grün               | `<g>` (g-Endpunkt des StrElements) |
 
 Merkhilfe: **g**rün = **G**egenrichtung.
 
@@ -569,102 +570,103 @@ Quell-EPSG-Code (`32600 + Zone`, z. B. Zone 32 → EPSG:32632).
 
 `Fkt` ist ein **6-Bit-Feld**; jedes Bit kodiert eine unabhängige Eigenschaft des StrElements:
 
-| Bit |  Wert | Eigenschaft |
-|----:|------:|-------------|
-|   0 |     1 | Tunnel |
-|   1 |     2 | Keine Gleisfunktion |
-|   2 |     4 | Weichenbausatz |
-|   3 |     8 | Keine Schulter rechts |
-|   4 |    16 | Keine Schulter links |
-|   5 |    32 | ETCS Trusted Area |
+| Bit | Wert | Eigenschaft           |
+| --: | ---: | --------------------- |
+|   0 |    1 | Tunnel                |
+|   1 |    2 | Keine Gleisfunktion   |
+|   2 |    4 | Weichenbausatz        |
+|   3 |    8 | Keine Schulter rechts |
+|   4 |   16 | Keine Schulter links  |
+|   5 |   32 | ETCS Trusted Area     |
 
 Für den Import sind ausschließlich **Bit 1** (Keine Gleisfunktion) und **Bit 2** (Weichenbausatz)
 relevant; alle anderen Bits beeinflussen Rendering und Fahrwegsicherung, nicht die Gleistopologie.
 **Bit 1 ist dominant**: sobald es gesetzt ist, wird das Element unabhängig von allen anderen Bits
 übersprungen – weder Knoten noch Kanten werden angelegt:
 
-| Bit 1 (Kein Gleis) | Bit 2 (Weiche) | Behandlung im Import | Beispiel-`Fkt` |
-|:---:|:---:|---|---|
-| – | – | **Gleis** – Geometrie und Topologie werden eingelesen | 0, 1, 8, 9, 16, 17 … |
-| – | x | **Weichenbausatz** – wird eingelesen; trägt ggf. Weichenknoten | 4, 5, 12, 13, 20, 21, 28, 29 … |
-| x | beliebig | **Kein Gleis** – wird **übersprungen** | 2, 3, 6, 7, 10, 11, 14, 15, 30, 31 … |
+| Bit 1 (Kein Gleis) | Bit 2 (Weiche) | Behandlung im Import                                           | Beispiel-`Fkt`                       |
+| :----------------: | :------------: | -------------------------------------------------------------- | ------------------------------------ |
+|         –          |       –        | **Gleis** – Geometrie und Topologie werden eingelesen          | 0, 1, 8, 9, 16, 17 …                 |
+|         –          |       x        | **Weichenbausatz** – wird eingelesen; trägt ggf. Weichenknoten | 4, 5, 12, 13, 20, 21, 28, 29 …       |
+|         x          |    beliebig    | **Kein Gleis** – wird **übersprungen**                         | 2, 3, 6, 7, 10, 11, 14, 15, 30, 31 … |
 
 **Vollständige Bit-Matrix**
 (T = Tunnel · KG = Kein Gleis · W = Weichenbausatz · −SR = keine Schulter rechts · −SL = keine Schulter links · E = ETCS Trusted Area):
 
-| Fkt |  T | KG |  W | −SR | −SL |  E |
-|----:|:--:|:--:|:--:|:---:|:---:|:--:|
-|   0 |  – |  – |  – |  –  |  –  |  – |
-|   1 |  x |  – |  – |  –  |  –  |  – |
-|   2 |  – |  x |  – |  –  |  –  |  – |
-|   3 |  x |  x |  – |  –  |  –  |  – |
-|   4 |  – |  – |  x |  –  |  –  |  – |
-|   5 |  x |  – |  x |  –  |  –  |  – |
-|   6 |  – |  x |  x |  –  |  –  |  – |
-|   7 |  x |  x |  x |  –  |  –  |  – |
-|   8 |  – |  – |  – |  x  |  –  |  – |
-|   9 |  x |  – |  – |  x  |  –  |  – |
-|  10 |  – |  x |  – |  x  |  –  |  – |
-|  11 |  x |  x |  – |  x  |  –  |  – |
-|  12 |  – |  – |  x |  x  |  –  |  – |
-|  13 |  x |  – |  x |  x  |  –  |  – |
-|  14 |  – |  x |  x |  x  |  –  |  – |
-|  15 |  x |  x |  x |  x  |  –  |  – |
-|  16 |  – |  – |  – |  –  |  x  |  – |
-|  17 |  x |  – |  – |  –  |  x  |  – |
-|  18 |  – |  x |  – |  –  |  x  |  – |
-|  19 |  x |  x |  – |  –  |  x  |  – |
-|  20 |  – |  – |  x |  –  |  x  |  – |
-|  21 |  x |  – |  x |  –  |  x  |  – |
-|  22 |  – |  x |  x |  –  |  x  |  – |
-|  23 |  x |  x |  x |  –  |  x  |  – |
-|  24 |  – |  – |  – |  x  |  x  |  – |
-|  25 |  x |  – |  – |  x  |  x  |  – |
-|  26 |  – |  x |  – |  x  |  x  |  – |
-|  27 |  x |  x |  – |  x  |  x  |  – |
-|  28 |  – |  – |  x |  x  |  x  |  – |
-|  29 |  x |  – |  x |  x  |  x  |  – |
-|  30 |  – |  x |  x |  x  |  x  |  – |
-|  31 |  x |  x |  x |  x  |  x  |  – |
-|  32 |  – |  – |  – |  –  |  –  |  x |
-|  33 |  x |  – |  – |  –  |  –  |  x |
-|  34 |  – |  x |  – |  –  |  –  |  x |
-|  35 |  x |  x |  – |  –  |  –  |  x |
-|  36 |  – |  – |  x |  –  |  –  |  x |
-|  37 |  x |  – |  x |  –  |  –  |  x |
-|  38 |  – |  x |  x |  –  |  –  |  x |
-|  39 |  x |  x |  x |  –  |  –  |  x |
-|  40 |  – |  – |  – |  x  |  –  |  x |
-|  41 |  x |  – |  – |  x  |  –  |  x |
-|  42 |  – |  x |  – |  x  |  –  |  x |
-|  43 |  x |  x |  – |  x  |  –  |  x |
-|  44 |  – |  – |  x |  x  |  –  |  x |
-|  45 |  x |  – |  x |  x  |  –  |  x |
-|  46 |  – |  x |  x |  x  |  –  |  x |
-|  47 |  x |  x |  x |  x  |  –  |  x |
-|  48 |  – |  – |  – |  –  |  x  |  x |
-|  49 |  x |  – |  – |  –  |  x  |  x |
-|  50 |  – |  x |  – |  –  |  x  |  x |
-|  51 |  x |  x |  – |  –  |  x  |  x |
-|  52 |  – |  – |  x |  –  |  x  |  x |
-|  53 |  x |  – |  x |  –  |  x  |  x |
-|  54 |  – |  x |  x |  –  |  x  |  x |
-|  55 |  x |  x |  x |  –  |  x  |  x |
-|  56 |  – |  – |  – |  x  |  x  |  x |
-|  57 |  x |  – |  – |  x  |  x  |  x |
-|  58 |  – |  x |  – |  x  |  x  |  x |
-|  59 |  x |  x |  – |  x  |  x  |  x |
-|  60 |  – |  – |  x |  x  |  x  |  x |
-|  61 |  x |  – |  x |  x  |  x  |  x |
-|  62 |  – |  x |  x |  x  |  x  |  x |
-|  63 |  x |  x |  x |  x  |  x  |  x |
+| Fkt |  T  | KG  |  W  | −SR | −SL |  E  |
+| --: | :-: | :-: | :-: | :-: | :-: | :-: |
+|   0 |  –  |  –  |  –  |  –  |  –  |  –  |
+|   1 |  x  |  –  |  –  |  –  |  –  |  –  |
+|   2 |  –  |  x  |  –  |  –  |  –  |  –  |
+|   3 |  x  |  x  |  –  |  –  |  –  |  –  |
+|   4 |  –  |  –  |  x  |  –  |  –  |  –  |
+|   5 |  x  |  –  |  x  |  –  |  –  |  –  |
+|   6 |  –  |  x  |  x  |  –  |  –  |  –  |
+|   7 |  x  |  x  |  x  |  –  |  –  |  –  |
+|   8 |  –  |  –  |  –  |  x  |  –  |  –  |
+|   9 |  x  |  –  |  –  |  x  |  –  |  –  |
+|  10 |  –  |  x  |  –  |  x  |  –  |  –  |
+|  11 |  x  |  x  |  –  |  x  |  –  |  –  |
+|  12 |  –  |  –  |  x  |  x  |  –  |  –  |
+|  13 |  x  |  –  |  x  |  x  |  –  |  –  |
+|  14 |  –  |  x  |  x  |  x  |  –  |  –  |
+|  15 |  x  |  x  |  x  |  x  |  –  |  –  |
+|  16 |  –  |  –  |  –  |  –  |  x  |  –  |
+|  17 |  x  |  –  |  –  |  –  |  x  |  –  |
+|  18 |  –  |  x  |  –  |  –  |  x  |  –  |
+|  19 |  x  |  x  |  –  |  –  |  x  |  –  |
+|  20 |  –  |  –  |  x  |  –  |  x  |  –  |
+|  21 |  x  |  –  |  x  |  –  |  x  |  –  |
+|  22 |  –  |  x  |  x  |  –  |  x  |  –  |
+|  23 |  x  |  x  |  x  |  –  |  x  |  –  |
+|  24 |  –  |  –  |  –  |  x  |  x  |  –  |
+|  25 |  x  |  –  |  –  |  x  |  x  |  –  |
+|  26 |  –  |  x  |  –  |  x  |  x  |  –  |
+|  27 |  x  |  x  |  –  |  x  |  x  |  –  |
+|  28 |  –  |  –  |  x  |  x  |  x  |  –  |
+|  29 |  x  |  –  |  x  |  x  |  x  |  –  |
+|  30 |  –  |  x  |  x  |  x  |  x  |  –  |
+|  31 |  x  |  x  |  x  |  x  |  x  |  –  |
+|  32 |  –  |  –  |  –  |  –  |  –  |  x  |
+|  33 |  x  |  –  |  –  |  –  |  –  |  x  |
+|  34 |  –  |  x  |  –  |  –  |  –  |  x  |
+|  35 |  x  |  x  |  –  |  –  |  –  |  x  |
+|  36 |  –  |  –  |  x  |  –  |  –  |  x  |
+|  37 |  x  |  –  |  x  |  –  |  –  |  x  |
+|  38 |  –  |  x  |  x  |  –  |  –  |  x  |
+|  39 |  x  |  x  |  x  |  –  |  –  |  x  |
+|  40 |  –  |  –  |  –  |  x  |  –  |  x  |
+|  41 |  x  |  –  |  –  |  x  |  –  |  x  |
+|  42 |  –  |  x  |  –  |  x  |  –  |  x  |
+|  43 |  x  |  x  |  –  |  x  |  –  |  x  |
+|  44 |  –  |  –  |  x  |  x  |  –  |  x  |
+|  45 |  x  |  –  |  x  |  x  |  –  |  x  |
+|  46 |  –  |  x  |  x  |  x  |  –  |  x  |
+|  47 |  x  |  x  |  x  |  x  |  –  |  x  |
+|  48 |  –  |  –  |  –  |  –  |  x  |  x  |
+|  49 |  x  |  –  |  –  |  –  |  x  |  x  |
+|  50 |  –  |  x  |  –  |  –  |  x  |  x  |
+|  51 |  x  |  x  |  –  |  –  |  x  |  x  |
+|  52 |  –  |  –  |  x  |  –  |  x  |  x  |
+|  53 |  x  |  –  |  x  |  –  |  x  |  x  |
+|  54 |  –  |  x  |  x  |  –  |  x  |  x  |
+|  55 |  x  |  x  |  x  |  –  |  x  |  x  |
+|  56 |  –  |  –  |  –  |  x  |  x  |  x  |
+|  57 |  x  |  –  |  –  |  x  |  x  |  x  |
+|  58 |  –  |  x  |  –  |  x  |  x  |  x  |
+|  59 |  x  |  x  |  –  |  x  |  x  |  x  |
+|  60 |  –  |  –  |  x  |  x  |  x  |  x  |
+|  61 |  x  |  –  |  x  |  x  |  x  |  x  |
+|  62 |  –  |  x  |  x  |  x  |  x  |  x  |
+|  63 |  x  |  x  |  x  |  x  |  x  |  x  |
+
 ---
 
 ## Paket-Struktur
 
 ```
 st3-Import/
-  ├─ st3_converter.py        # Klasse st3Converter (Konvertierungslogik, 8 Schritte)
+  ├─ st3_converter.py        # Klasse St3Converter (Konvertierungslogik, 8 Schritte)
   ├─ config/
   │    └─ st3_converter_config.json   # Persistente Einstellungen
   ├─ convert/
@@ -675,18 +677,18 @@ st3-Import/
        ├─ cli.py             # CLI (interaktiver Modus + argparse)
 ```
 
-### `st3Converter` (`st3_converter.py`)
+### `St3Converter` (`st3_converter.py`)
 
 Hauptklasse; Kann als Bibliothek oder von CLI (`core/cli.py`)
 gleichermaßen genutzt werden. Konstruktor:
 
 ```python
-st3Converter(
-    input_path,                  # Pfad zur .st3-Datei
-    target_epsg=31467,           # Ziel-KBS
+St3Converter(
+    input_path,  # Pfad zur .st3-Datei
+    target_epsg=31467,  # Ziel-KBS
     auto_detect_crs=True,
-    normalize_switch_names=True, # Weichenknoten-Namen normalisieren
-    progress_callback=None
+    normalize_switch_names=True,  # Weichenknoten-Namen normalisieren
+    progress_callback=None,
 )
 ```
 
@@ -698,15 +700,15 @@ Rückgabe von `convert()`: `(nodes_features, edges_features)` — Listen von Fea
 Verwaltet die persistenten Einstellungen; lädt/speichert
 `config/st3_converter_config.json`. Schlüssel und Defaults:
 
-| Schlüssel | Default | Beschreibung |
-|---|---|---|
-| `auto_detect_crs` | `true` | Quell-KBS aus `<UTM UTM_Zone>` lesen |
-| `fallback_epsg` | `32632` | Rückfall-KBS wenn Auto-Erkennung fehlschlägt |
-| `target_epsg` | `31467` | Ziel-KBS der Ausgabe-Geometrien |
-| `normalize_switch_names` | `true` | Namen von Weichenknoten normalisieren (W/EW/DKW-Präfix und ESTW-Bereichskennziffer entfernen) |
-| `import_envelope` | `true` | Hüllkurve aus `<Huellkurve>` als Polygon-Layer importieren |
-| `create_log_file` | `true` | `.log`-Datei neben Eingabedatei anlegen |
-| `open_log_file` | `false` | Protokoll nach Abschluss öffnen |
+| Schlüssel                | Default | Beschreibung                                                                                  |
+| ------------------------ | ------- | --------------------------------------------------------------------------------------------- |
+| `auto_detect_crs`        | `true`  | Quell-KBS aus `<UTM UTM_Zone>` lesen                                                          |
+| `fallback_epsg`          | `32632` | Rückfall-KBS wenn Auto-Erkennung fehlschlägt                                                  |
+| `target_epsg`            | `31467` | Ziel-KBS der Ausgabe-Geometrien                                                               |
+| `normalize_switch_names` | `true`  | Namen von Weichenknoten normalisieren (W/EW/DKW-Präfix und ESTW-Bereichskennziffer entfernen) |
+| `import_envelope`        | `true`  | Hüllkurve aus `<Huellkurve>` als Polygon-Layer importieren                                    |
+| `create_log_file`        | `true`  | `.log`-Datei neben Eingabedatei anlegen                                                       |
+| `open_log_file`          | `false` | Protokoll nach Abschluss öffnen                                                               |
 
 ### `cli.py` (`core/cli.py`)
 
@@ -722,10 +724,10 @@ aktiv, wird ein dritter Layer `Hüllkurve` in dieselbe `.gpkg`-Datei geschrieben
 
 **Hüllkurven-spezifische Schalter:**
 
-| Schalter | Bedeutung |
-|---|---|
-| `--import-envelope` | Hüllkurven-Import erzwingen (unabhängig von gespeicherter Config) |
-| `--no-import-envelope` | Hüllkurven-Import deaktivieren |
+| Schalter               | Bedeutung                                                         |
+| ---------------------- | ----------------------------------------------------------------- |
+| `--import-envelope`    | Hüllkurven-Import erzwingen (unabhängig von gespeicherter Config) |
+| `--no-import-envelope` | Hüllkurven-Import deaktivieren                                    |
 
 ### Signal-Elemente
 
@@ -745,14 +747,15 @@ Innerhalb eines `StrElement` können `<Signal>`-Kindelemente auftreten:
 Jedes `StrElement` kann Verweise auf seine Nachfolger in Norm- und Gegenrichtung tragen.
 Es gibt zwei Varianten:
 
-| Kindknoten | Bedeutung |
-|---|---|
-| `<NachNorm Nr="…">` | Nummer eines **Nachfolger-Elements im selben Modul** (Normrichtung) |
-| `<NachGegen Nr="…">` | Nummer eines **Nachfolger-Elements im selben Modul** (Gegenrichtung) |
-| `<NachNormModul Nr="…"><Datei Dateiname="…"/></NachNormModul>` | Nummer eines **Referenzpunkts vom Typ „Modulgrenze"** in einem anderen Modul (Normrichtung) |
-| `<NachGegenModul Nr="…"><Datei Dateiname="…"/></NachGegenModul>` | Wie oben, Gegenrichtung |
+| Kindknoten                                                       | Bedeutung                                                                                   |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `<NachNorm Nr="…">`                                              | Nummer eines **Nachfolger-Elements im selben Modul** (Normrichtung)                         |
+| `<NachGegen Nr="…">`                                             | Nummer eines **Nachfolger-Elements im selben Modul** (Gegenrichtung)                        |
+| `<NachNormModul Nr="…"><Datei Dateiname="…"/></NachNormModul>`   | Nummer eines **Referenzpunkts vom Typ „Modulgrenze"** in einem anderen Modul (Normrichtung) |
+| `<NachGegenModul Nr="…"><Datei Dateiname="…"/></NachGegenModul>` | Wie oben, Gegenrichtung                                                                     |
 
 Der 3D-Editor schreibt diese Knoten immer in fester Reihenfolge:
+
 1. alle `NachNorm`-Knoten
 2. alle `NachGegen`-Knoten
 3. alle `NachNormModul`-Knoten
@@ -789,12 +792,12 @@ def successor_side(connection: int, idx: int, direction: str) -> str:
 
 **Beispiel-Tabelle** (grünes Ende `==Nr==>` blaues Ende):
 
-| Situation | Nachfolger von (2, NORM) | Nachfolger von (2, GEGEN) | `Anschluss` von Element 2 |
-|---|---|---|---|
-| `==1==> ==2==> ==3==>` | (3, NORM) | (1, GEGEN) | 256 = 2⁸ |
-| `==1==> ==2==> <==3==` | (3, GEGEN) | (1, GEGEN) | 257 = 2⁸ + 2⁰ |
-| `<==1== ==2==> ==3==>` | (3, NORM) | (1, NORM) | 0 |
-| `<==1== ==2==> <==3==` | (3, GEGEN) | (1, NORM) | 1 = 2⁰ |
+| Situation              | Nachfolger von (2, NORM) | Nachfolger von (2, GEGEN) | `Anschluss` von Element 2 |
+| ---------------------- | ------------------------ | ------------------------- | ------------------------- |
+| `==1==> ==2==> ==3==>` | (3, NORM)                | (1, GEGEN)                | 256 = 2⁸                  |
+| `==1==> ==2==> <==3==` | (3, GEGEN)               | (1, GEGEN)                | 257 = 2⁸ + 2⁰             |
+| `<==1== ==2==> ==3==>` | (3, NORM)                | (1, NORM)                 | 0                         |
+| `<==1== ==2==> <==3==` | (3, GEGEN)               | (1, NORM)                 | 1 = 2⁰                    |
 
 ### Einheiten und XML-Konventionen
 
@@ -803,25 +806,26 @@ Für alle Zusi-XML-Formate gelten folgende Grundregeln
 
 **Standardwerte bei fehlenden Attributen:**
 
-| Attributtyp | Standardwert |
-|---|---|
-| Ganzzahl (integer, bool, enum) | `0` |
-| Gleitkommazahl (single) | `0.0` |
-| Zeichenkette (string) | `""` (leer) |
+| Attributtyp                    | Standardwert |
+| ------------------------------ | ------------ |
+| Ganzzahl (integer, bool, enum) | `0`          |
+| Gleitkommazahl (single)        | `0.0`        |
+| Zeichenkette (string)          | `""` (leer)  |
 
 Fehlende oder leere Attribute (`Attribut=""`) gelten als Standardwert. Zusi lässt
 Attribute weg, wenn ihr Wert dem Standardwert entspricht.
 
 **Einheiten in der XML-Datei:**
 
-| Größe | XML-Einheit | Anzeige in der Oberfläche |
-|---|---|---|
-| Geschwindigkeit | m/s | km/h |
-| Winkel | Bogenmaß (rad) | Grad (°) |
-| Krümmung | 1/m | 1/km (3D-Editor) |
-| Überhöhung | Winkel im Bogenmaß | Grad und mm (je nach Oberbau); positive Werte = Rechtsneigung (bei Blick vom Elementanfang zum -ende) |
+| Größe           | XML-Einheit        | Anzeige in der Oberfläche                                                                             |
+| --------------- | ------------------ | ----------------------------------------------------------------------------------------------------- |
+| Geschwindigkeit | m/s                | km/h                                                                                                  |
+| Winkel          | Bogenmaß (rad)     | Grad (°)                                                                                              |
+| Krümmung        | 1/m                | 1/km (3D-Editor)                                                                                      |
+| Überhöhung      | Winkel im Bogenmaß | Grad und mm (je nach Oberbau); positive Werte = Rechtsneigung (bei Blick vom Elementanfang zum -ende) |
 
 **Dateipfade** (`<Datei Dateiname="…">`):
+
 - Enthalten Backslashes → relativ zum Zusi-Datenverzeichnis; ein führender Backslash
   wird ignoriert
 - Kein Backslash → Datei liegt im selben Verzeichnis wie die referenzierende Datei
@@ -832,18 +836,18 @@ Attribute weg, wenn ihr Wert dem Standardwert entspricht.
 
 ### Kanten-Layer (`LineString`)
 
-| Feldname | Typ | Beschreibung |
-|---|---|---|
-| `id` | Integer | Laufende Kanten-Nummer |
-| `knotenname_von` | String (200) | Name des Gleisknotens am Anfangspunkt der Kante |
-| `knotenname_bis` | String (200) | Name des Gleisknotens am Endpunkt der Kante |
-| `bst_von` | String (200) | `NameBetriebsstelle` des Weichenknotens am Anfangspunkt; `NULL` wenn kein Weichenknoten |
-| `bst_bis` | String (200) | `NameBetriebsstelle` des Weichenknotens am Endpunkt; `NULL` wenn kein Weichenknoten |
-| `km_von` | Double (6 Nachkommastellen) | Kilometerstand am ersten StrElement der Kante |
-| `km_bis` | Double (6 Nachkommastellen) | Kilometerstand am letzten StrElement der Kante |
-| `strelemente_anz` | Integer | Anzahl der StrElemente in der Kante |
-| `strelement_von` | Integer | `Nr` des ersten StrElements |
-| `strelement_bis` | Integer | `Nr` des letzten StrElements |
+| Feldname          | Typ                         | Beschreibung                                                                            |
+| ----------------- | --------------------------- | --------------------------------------------------------------------------------------- |
+| `id`              | Integer                     | Laufende Kanten-Nummer                                                                  |
+| `knotenname_von`  | String (200)                | Name des Gleisknotens am Anfangspunkt der Kante                                         |
+| `knotenname_bis`  | String (200)                | Name des Gleisknotens am Endpunkt der Kante                                             |
+| `bst_von`         | String (200)                | `NameBetriebsstelle` des Weichenknotens am Anfangspunkt; `NULL` wenn kein Weichenknoten |
+| `bst_bis`         | String (200)                | `NameBetriebsstelle` des Weichenknotens am Endpunkt; `NULL` wenn kein Weichenknoten     |
+| `km_von`          | Double (6 Nachkommastellen) | Kilometerstand am ersten StrElement der Kante                                           |
+| `km_bis`          | Double (6 Nachkommastellen) | Kilometerstand am letzten StrElement der Kante                                          |
+| `strelemente_anz` | Integer                     | Anzahl der StrElemente in der Kante                                                     |
+| `strelement_von`  | Integer                     | `Nr` des ersten StrElements                                                             |
+| `strelement_bis`  | Integer                     | `Nr` des letzten StrElements                                                            |
 
 > `knotenname_von`/`knotenname_bis` können `NULL` sein, wenn am Endpunkt kein benannter Knoten liegt.
 > `bst_von`/`bst_bis` sind nur gesetzt, wenn der jeweilige Endknoten ein Weichenknoten mit `NameBetriebsstelle`-Signal ist.
@@ -852,35 +856,35 @@ Attribute weg, wenn ihr Wert dem Standardwert entspricht.
 
 ### Knoten-Layer (`Point`)
 
-| Feldname | Typ | Beschreibung |
-|---|---|---|
-| `id` | Integer | Laufende Knoten-Nummer |
-| `knotenname` | String (200) | Weiche mit Signal: normalisierter Signalname (Präfixe W/EW/DKW entfernt, DKW-Suffix in Großbuchstaben); Weiche ohne Signal: auto-generiert `<dateistem>_<nr>X`; Modulgrenze: `<dateistem>_<nr>G`; Gleisende: `<dateistem>_<nr>E` |
-| `bst_name` | String (200) | `NameBetriebsstelle` des Weichensignals (SignalTyp 2); `NULL` bei allen anderen Knotentypen |
-| `typ` | String (200) | `Weiche`, `Modulgrenze`, `Gleisende` |
-| `knotenbeschr` | String (200) | Weichenbauart (Präfix aus `_Schienen`-Dateinamen), z. B. `54_760_1-18_5_Rechts` |
-| `nr` | Integer | `Nr`-Attribut des zugehörigen StrElements |
-| `km` | Double (6 Nachkommastellen) | Kilometerstand des zugehörigen StrElements |
-| `datei` | String (400) | Stem des Quelldateinamens (ohne `.st3`) |
-| `nachbarmodul` | String (400) | Stem des referenzierten Nachbarmoduls (nur bei `typ=Modulgrenze`) |
+| Feldname       | Typ                         | Beschreibung                                                                                                                                                                                                                     |
+| -------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`           | Integer                     | Laufende Knoten-Nummer                                                                                                                                                                                                           |
+| `knotenname`   | String (200)                | Weiche mit Signal: normalisierter Signalname (Präfixe W/EW/DKW entfernt, DKW-Suffix in Großbuchstaben); Weiche ohne Signal: auto-generiert `<dateistem>_<nr>X`; Modulgrenze: `<dateistem>_<nr>G`; Gleisende: `<dateistem>_<nr>E` |
+| `bst_name`     | String (200)                | `NameBetriebsstelle` des Weichensignals (SignalTyp 2); `NULL` bei allen anderen Knotentypen                                                                                                                                      |
+| `typ`          | String (200)                | `Weiche`, `Modulgrenze`, `Gleisende`                                                                                                                                                                                             |
+| `knotenbeschr` | String (200)                | Weichenbauart (Präfix aus `_Schienen`-Dateinamen), z. B. `54_760_1-18_5_Rechts`                                                                                                                                                  |
+| `nr`           | Integer                     | `Nr`-Attribut des zugehörigen StrElements                                                                                                                                                                                        |
+| `km`           | Double (6 Nachkommastellen) | Kilometerstand des zugehörigen StrElements                                                                                                                                                                                       |
+| `datei`        | String (400)                | Stem des Quelldateinamens (ohne `.st3`)                                                                                                                                                                                          |
+| `nachbarmodul` | String (400)                | Stem des referenzierten Nachbarmoduls (nur bei `typ=Modulgrenze`)                                                                                                                                                                |
 
 **Knotentypen:**
 
-| `typ` | Herkunft | `knotenname` |
-|---|---|---|
-| `Weiche` | Vertex-Grad ≥ 3 | normalisierter Signalname (→ Normalisieren s. o.); ohne Signal: `<dateistem>_<nr>X` (auto) |
-| `Modulgrenze` | `NachNormModul` oder `NachGegenModul` im StrElement | `<dateistem>_<nr>G` (auto) |
-| `Gleisende` | Freistehender Endpunkt ohne anderen Knotentyp | `<dateistem>_<nr>E` (auto) |
+| `typ`         | Herkunft                                            | `knotenname`                                                                               |
+| ------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `Weiche`      | Vertex-Grad ≥ 3                                     | normalisierter Signalname (→ Normalisieren s. o.); ohne Signal: `<dateistem>_<nr>X` (auto) |
+| `Modulgrenze` | `NachNormModul` oder `NachGegenModul` im StrElement | `<dateistem>_<nr>G` (auto)                                                                 |
+| `Gleisende`   | Freistehender Endpunkt ohne anderen Knotentyp       | `<dateistem>_<nr>E` (auto)                                                                 |
 
 `<dateistem>` ist der Dateiname der importierten `.st3`-Datei ohne Erweiterung (z. B. `Freudenstein_2025`).
 Damit sind Auto-Knotennamen modul-übergreifend eindeutig, auch wenn mehrere Module zusammengeführt werden.
 
 ### Hüllkurven-Layer (`Polygon`)
 
-| Feldname | Typ | Beschreibung |
-|---|---|---|
-| `id` | Integer | Laufende Polygon-Nummer (1 im Einzelimport; 1…n im Batch) |
-| `streckenmodul` | String (400) | Datei-Stem des Quellmoduls (z. B. `Freudenstein_2025`) |
-| `utm_zone` | Integer | UTM-Zonennummer aus `<UTM UTM_Zone>` der Quelldatei (z. B. `32`) |
+| Feldname        | Typ          | Beschreibung                                                     |
+| --------------- | ------------ | ---------------------------------------------------------------- |
+| `id`            | Integer      | Laufende Polygon-Nummer (1 im Einzelimport; 1…n im Batch)        |
+| `streckenmodul` | String (400) | Datei-Stem des Quellmoduls (z. B. `Freudenstein_2025`)           |
+| `utm_zone`      | Integer      | UTM-Zonennummer aus `<UTM UTM_Zone>` der Quelldatei (z. B. `32`) |
 
 Layer-Name im GeoPackage: `Hüllkurve`
