@@ -330,7 +330,9 @@ Schritt 2 und der geometrischen Übereinstimmung aus den `<g>`/`<b>`-Koordinaten
 ### Schritt 6 – Graphtraversierung: Kanten bilden
 
 Von jedem Breakpoint B aus wird für jede anliegende Kante ein **Walk** gestartet,
-sofern das Element noch nicht besucht ist:
+sofern das Element noch nicht besucht ist. Die Breakpoints werden dabei nach
+(Element-Nr, Seite) sortiert durchlaufen, damit Kanten-IDs und Reihenfolge der
+Kanten bei jedem Lauf gleich sind:
 
 ```
 Walk(B, elem, entry_side):

@@ -665,8 +665,10 @@ class st3Converter:
         edges = []
         edge_id = 1
 
-        # Walk von jedem Breakpoint aus
-        for bp_v in bp_set:
+        # Walk von jedem Breakpoint aus, sortiert nach (Element-Nr, Seite): bp_set ist ein
+        # Set, dessen Reihenfolge von der Hash-Randomisierung abhängt; so bleiben Kanten-IDs
+        # und Kantenreihenfolge bei jedem Lauf gleich.
+        for bp_v in sorted(bp_set):
             for elem_nr, entry_side in vertex_inc[bp_v]:
                 if elem_nr in visited:
                     continue
