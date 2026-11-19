@@ -29,4 +29,5 @@ desktop.ini
 .vscode/
 
 # Claude Code
-.claude/
+.claude/*
+!.claude/settings.json
