@@ -14,7 +14,8 @@ st3-Import: Konverter für Zusi-3-Streckendateien (`.st3`) in ein Knoten-Kanten-
 - Branches: `dev` ist der Entwicklungszweig, `main` erhält nur Releases. Nach `dev` wird nur per PR gemergt; direkte Commits nur im Ausnahmefall.
 - Grundsätzlich in Git-Worktrees arbeiten. Ablage unter `.claude/worktrees/<name>` (ignoriert): `git worktree add .claude/worktrees/<name> -b <branch> origin/dev`. `EnterWorktree` scheitert hier an der Schreibweise des Laufwerks (`e:` vs. `E:`).
   Aufräumen nach dem Merge aus dem Hauptverzeichnis: `git worktree remove .claude/worktrees/<name>`, dann `git branch -D <branch>` (nach Squash-/Merge-Commit meldet `-d` „not fully merged“) und `git push origin --delete <branch>`.
-- Claude wird weder in Kommentaren erwähnt noch als Co-Autor eingetragen.
+- Claude wird weder in Kommentaren erwähnt noch als Co-Autor eingetragen; `.claude/settings.json` schaltet die Signaturen von Claude Code ab (`attribution`).
+- Biome heißt auf npm `@biomejs/biome` und wird immer als `npx @biomejs/biome@<Version>` aufgerufen (Version wie `$schema` in `biome.json`). Nie `npx biome`, `npm i biome` o. ä.: Ohne lokales `node_modules/` holt das das fremde Paket `biome` (0.3.3) und führt zu Fehlern. `.claude/settings.json` sperrt diese Aufrufe.
 - Issues und PRs dürfen in Quelltext-Kommentaren genannt werden.
 - Projektsprache Deutsch (Kommentare, Docstrings, Doku, Konsolenausgaben) mit korrekten Umlauten.
 
