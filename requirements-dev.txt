@@ -7,7 +7,7 @@
 -r requirements.txt
 
 # Formatierung und Lint (Konfiguration in pyproject.toml)
-ruff==0.17.0
+ruff==0.17.6
 
 # Typprüfung (Konfiguration in pyproject.toml). Das Extra "nodejs" bringt die Node-Laufzeit
 # als Python-Paket mit.
