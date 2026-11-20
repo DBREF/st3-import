@@ -61,8 +61,8 @@ Geprüft und formatiert wird mit [Ruff](https://docs.astral.sh/ruff/) für Pytho
 .venv\Scripts\ruff.exe check .                # Python prüfen
 .venv\Scripts\ruff.exe format --check .       # Python-Formatierung prüfen
 .venv\Scripts\pyright.exe                     # Typen prüfen
-npx @biomejs/biome@2.6.6 check .              # Markdown/JSON prüfen
-npx @biomejs/biome@2.6.6 check --write .      # sichere Korrekturen und Formatierung anwenden
+npx @biomejs/biome@2.6.8 check .              # Markdown/JSON prüfen
+npx @biomejs/biome@2.6.8 check --write .      # sichere Korrekturen und Formatierung anwenden
 ```
 
 ---
